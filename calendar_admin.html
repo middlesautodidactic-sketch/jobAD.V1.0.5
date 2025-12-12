@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📅 ปฏิทินงาน (Admin)</title>
+
+<!-- FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales-all.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  color: #2d3748;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* ====== Header ====== */
+header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #c00;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ====== Sidebar ====== */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 320px;
+  height: 100%;
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  color: #fff;
+  padding: 2rem;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 150;
+  overflow-y: auto;
+}
+
+#sidebar.open {
+  left: 0;
+}
+
+#sidebar h2 {
+  margin-top: 60px;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.user-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  text-align: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.user-card .user-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-card .user-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  margin-bottom: 0.25rem;
+}
+
+.user-card #displayName {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+#sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #fff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+#sidebar a:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(8px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+#closeSidebarBtn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+#closeSidebarBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+#sidebarOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 140;
+  transition: opacity 0.3s ease;
+}
+
+#sidebarOverlay.show {
+  display: block;
+}
+
+#openSidebarBtn {
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  border: none;
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(192, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#openSidebarBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(192, 0, 0, 0.6);
+}
+
+/* ====== Search Bar ====== */
+#searchBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem auto;
+  max-width: 800px;
+  padding: 0 1rem;
+  flex-wrap: wrap;
+}
+
+#jobSearch {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Prompt', sans-serif;
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease;
+}
+
+#jobSearch:focus {
+  outline: none;
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+#btnSearch, #btnReport {
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: 'Prompt', sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#btnSearch {
+  background: rgba(255, 255, 255, 0.95);
+  color: #c00;
+}
+
+#btnSearch:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+#btnReport {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+#btnReport:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ====== Calendar ====== */
+#calendar {
+  width: 95%;
+  max-width: 1400px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+#calendar:hover {
+  transform: translateY(-4px);
+}
+
+.fc .fc-toolbar-title {
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.fc .fc-button-primary {
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.fc .fc-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(192, 0, 0, 0.4);
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: linear-gradient(135deg, #a00 0%, #c00 100%);
+}
+
+.fc .fc-daygrid-event {
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin: 2px 0;
+  border-left: 4px solid;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.fc .fc-daygrid-event:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ====== Footer ====== */
+footer {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: #4a5568;
+  text-align: center;
+  padding: 1rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  border-top: 2px solid #c00;
+  font-size: 0.875rem;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  header {
+    padding: 1rem;
+  }
+
+  .header-title {
+    font-size: 1.25rem;
+  }
+
+  #calendar {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  #sidebar {
+    width: 280px;
+  }
+
+  #searchBar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  #jobSearch, #btnSearch, #btnReport {
+    width: 100%;
+  }
+}
+
+/* ====== Loading Animation ====== */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(192, 0, 0, 0.3);
+  border-radius: 50%;
+  border-top-color: #c00;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">📅 ปฏิทินงาน (SALES & ADMIN)</div>
+  <button id="openSidebarBtn">☰</button>
+</header>
+
+<div id="sidebar">
+  <button id="closeSidebarBtn">✕</button>
+  
+  <div class="logo-container" style="text-align: center; margin-bottom: 1rem;">
+    <img src="ad_logo-Photoroom.png" style="width: 80px; height: auto; background: rgba(255,255,255,0.9); padding: 8px; border-radius: 12px;">
+  </div>
+  
+  <div class="user-card">
+    <div class="user-icon">👤</div>
+    <div class="user-label">ผู้ใช้งาน</div>
+    <div id="displayName">Loading...</div>
+  </div>
+  
+  <a href="#" id="navAddJob">➕ เพิ่มงาน</a>
+  <a href="loginAM.html">📋 จัดการระบบ</a>
+  <a href="index.html">🚪 กลับไปหน้าหลัก</a>
+</div>
+
+<div id="sidebarOverlay"></div>
+
+<!-- Search Bar -->
+<div id="searchBar">
+  <input type="text" id="jobSearch" placeholder="🔍 ค้นหาเลขที่งาน (Job Number)">
+  <button id="btnSearch">ค้นหา</button>
+  <button id="btnReport">ดูรายงาน</button>
+</div>
+
+<div id="calendar"></div>
+
+<footer>&copy; 2025 ระบบจองบุคคลออกปฏิบัติงาน | AUTODIDACTIC</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Updated Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+  authDomain: "events-666d6.firebaseapp.com",
+  projectId: "events-666d6",
+  storageBucket: "events-666d6.firebasestorage.app",
+  messagingSenderId: "589078390914",
+  appId: "1:589078390914:web:480ce96137ffac835aac9b",
+  measurementId: "G-97GD75S814"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ✅ รับข้อมูลจาก URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+let userName = urlParams.get('name');
+let userId = urlParams.get('userId');
+let userPosition = urlParams.get('position');
+
+// ถ้าไม่มีใน URL ให้ลองดึงจาก sessionStorage
+if (!userName) {
+  userName = sessionStorage.getItem('userName');
+  userId = sessionStorage.getItem('userId');
+  userPosition = sessionStorage.getItem('userPosition');
+}
+
+// แสดงชื่อผู้ใช้
+if (userName) {
+  document.getElementById('displayName').textContent = userName;
+  // เก็บลง sessionStorage สำหรับใช้ต่อ
+  sessionStorage.setItem('userName', userName);
+  if (userId) sessionStorage.setItem('userId', userId);
+  if (userPosition) sessionStorage.setItem('userPosition', userPosition);
+} else {
+  document.getElementById('displayName').textContent = 'Guest';
+}
+
+// ✅ ฟังก์ชันสร้าง URL พร้อมชื่อผู้ใช้
+function createURLWithUser(baseUrl, additionalParams = {}) {
+  const params = new URLSearchParams({
+    name: userName || 'Guest',
+    userId: userId || '',
+    position: userPosition || '',
+    ...additionalParams
+  });
+  return `${baseUrl}?${params.toString()}`;
+}
+
+// ✅ เมื่อคลิกปุ่ม "เพิ่มงาน" ส่งชื่อไปด้วย
+document.getElementById('navAddJob').addEventListener('click', (e) => {
+  e.preventDefault();
+  window.location.href = createURLWithUser('notchoose.html');
+});
+
+// Sidebar toggle
+document.getElementById('openSidebarBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+});
+
+document.getElementById('closeSidebarBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+});
+
+document.getElementById('sidebarOverlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+});
+
+// ✅ ฟังก์ชันบวก 2 วันสำหรับแสดงในปฏิทินให้ครบ
+function addOneDayForCalendar(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + 2);
+  return d.toISOString().split("T")[0];
+}
+
+document.addEventListener("DOMContentLoaded", async function() {
+  const calendarEl = document.getElementById("calendar");
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: "th",
+    initialView: window.innerWidth < 600 ? "listWeek" : "dayGridMonth",
+    headerToolbar: {
+      left: "prev,next today",
+      center: "title",
+      right: "dayGridMonth,timeGridWeek,listWeek"
+    },
+    eventContent: function(arg) {
+      const data = arg.event.extendedProps;
+      const el = document.createElement("div");
+      
+      if (data.type === "leave") {
+        el.innerHTML = `<div style="background:#E3F2FD; border-left:5px solid #2196F3; padding:8px; border-radius:8px;">
+          <strong>🏖 ${arg.event.title}</strong><br>
+          <small>เหตุผล: ${data.reason}</small></div>`;
+      } else if (data.type === "holiday") {
+        el.innerHTML = `<div style="background:#FF9800; border-radius:8px; padding:8px; color:#fff; text-align:center;">
+          🎉 ${arg.event.title}</div>`;
+      } else {
+        let acknowledgeLabel = "";
+        if (data.acknowledged === true && data.status !== "เรียบร้อย" && data.status !== "ไม่เรียบร้อย") {
+          acknowledgeLabel = `<span style="float:right; font-size:11px; color:#fff;">(รับทราบแล้ว)</span>`;
+        }
+
+        const locationDisplay = data.location || "-";
+        const howtoDisplay = data.howto ? ` (${data.howto})` : "";
+
+        el.innerHTML = `
+          <div style="position: relative; width:100%;">
+            <strong>${arg.event.title}</strong>
+            ${acknowledgeLabel}
+          </div>
+          <small>📍 ${locationDisplay}${howtoDisplay}</small><br>
+          <small>🧰 ${data.jobTypes || "-"}</small><br>
+          <small>📌 ${data.status || "-"}</small>
+        `; 
+      }
+      return { domNodes: [el] };
+    },
+    eventClick: function(info) {
+      const id = info.event.id;
+      // ✅ ส่งชื่อผู้ใช้ไปด้วยเมื่อคลิกที่งาน
+      window.location.href = createURLWithUser('notchoose.html', { id: id });
+    },
+    windowResize: function() {
+      if(window.innerWidth < 600){
+        calendar.changeView('listWeek');
+      } else {
+        calendar.changeView('dayGridMonth');
+      }
+    }
+  });
+
+  const allEvents = [];
+
+  try {
+    const eventSnap = await getDocs(collection(db,"events"));
+    const leaveSnap = await getDocs(collection(db,"leaves"));
+    const holidaySnap = await getDocs(collection(db, "holidays"));
+
+    function addOneDay(dateStr){
+      if(!dateStr) return "";
+      const d = new Date(dateStr);
+      d.setDate(d.getDate()+1);
+      return d.toISOString().split("T")[0];
+    }
+
+    eventSnap.forEach(docItem=>{
+      const data = docItem.data();
+      let color = "gray";
+      if(data.status==="อนุมัติ") color="#E3C565";
+      else if (data.status === "อนุมัติด่วน") color = "#b23400";
+      else if(data.status==="เรียบร้อย") color="green";
+      else if(data.status==="ไม่เรียบร้อย") color="darkred";
+
+      allEvents.push({
+        id: docItem.id,
+        title: Array.isArray(data.workers) ? data.workers.join(", ") : (data.workers || "-"),
+        start: data.start || "",
+        end: data.end ? addOneDayForCalendar(data.end) : undefined,
+        location: data.location || "",
+        howto: data.howto || "",
+        assignedBy: Array.isArray(data.assigners) ? data.assigners.join(", ") : (data.assigners || "-"),
+        jobNumber: data.jobNumber || "-",
+        jobTypes: Array.isArray(data.jobTypes) ? data.jobTypes.join(", ") : (data.jobTypes || "-"),
+        details: data.details || "-",
+        status: data.status || "รออนุมัติ",
+        incompleteReason: data.incompleteReason || "",
+        remark: data.remark || "",
+        acknowledged: data.acknowledged || false,
+        realStart: data.start || "",
+        realEnd: data.end || "",
+        backgroundColor: color,
+        borderColor: color,
+        textColor: "#fff",
+        type: "event",
+        allDay: true
+      });
+    });
+
+    leaveSnap.forEach(docItem=>{
+      const data = docItem.data();
+      allEvents.push({
+        id: "leave-"+docItem.id,
+        title: data.name||"-",
+        start: data.start||"",
+        end: addOneDay(data.end),
+        backgroundColor: "#2196F3",
+        borderColor: "#2196F3",
+        textColor: "#000",
+        reason: data.reason||"",
+        type: "leave",
+        allDay: true
+      });
+    });
+
+    holidaySnap.forEach((docItem) => {
+      const data = docItem.data();
+      allEvents.push({
+        id: "holiday-" + docItem.id,
+        title: data.name || "วันหยุด",
+        start: data.date || "",
+        end: data.date || "",
+        backgroundColor: "#FF9800",
+        borderColor: "#FF9800",
+        textColor: "#fff",
+        type: "holiday",
+        allDay: true,
+        reason: data.reason || ""
+      });
+    });
+
+    calendar.addEventSource(allEvents);
+    calendar.render();
+
+    // 🔹 ปุ่มค้นหา
+    document.getElementById("btnSearch").addEventListener("click", ()=>{
+      const keyword = document.getElementById("jobSearch").value.trim().toLowerCase();
+      const filtered = keyword 
+        ? allEvents.filter(e => e.jobNumber && e.jobNumber.toLowerCase().includes(keyword)) 
+        : allEvents;
+
+      if(filtered.length === 0){
+        alert("❌ ไม่พบงานนี้");
+        return;
+      }
+
+      calendar.removeAllEvents();
+      calendar.addEventSource(filtered);
+      calendar.changeView(window.innerWidth < 600 ? "listWeek" : "dayGridMonth");
+
+      const firstEvent = filtered[0];
+      if(firstEvent.start){
+        calendar.gotoDate(firstEvent.start);
+      }
+    });
+
+    // 🔹 ปุ่มดูรายงาน
+    document.getElementById("btnReport").addEventListener("click", ()=>{
+      const keyword = document.getElementById("jobSearch").value.trim();
+      if(!keyword){
+        alert("กรุณากรอกเลขที่งานก่อนดูรายงาน");
+        return;
+      }
+      const event = allEvents.find(e => e.jobNumber && e.jobNumber.toLowerCase() === keyword.toLowerCase());
+      if(!event){
+        alert("❌ ไม่พบงานนี้");
+        return;
+      }
+      window.location.href = `seereport.html?job=${encodeURIComponent(event.jobNumber)}`;
+    });
+
+  } catch(err){
+    console.error("❌ โหลดข้อมูลจาก Firebase ไม่สำเร็จ:", err);
+    calendar.render();
+  }
+});
+</script>
+
+</body>
+</html>

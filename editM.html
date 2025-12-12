@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แก้ไขงาน | AUTODIDACTIC</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(to bottom, #fff, #fee);
+  color: #c00;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+header {
+  width: 100%;
+  background: #c00;
+  color: #fff;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+header a {
+  position: absolute;
+  left: 20px;
+  top: 12px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+header a:hover { background: rgba(255,255,255,0.35); }
+
+form {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border: 2px solid #c00;
+  padding: 25px;
+  margin: 30px 0;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+}
+h2 { text-align: center; margin-top: 0; color: #c00; }
+
+.input-line {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 2px solid #c00;
+  border-radius: 8px;
+  outline: none;
+  font-size: 15px;
+  color: #c00;
+  box-sizing: border-box;
+  background: #fff;
+}
+textarea.input-line { height: 90px; resize: none; }
+
+select.input-line {
+  background: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 8px;
+  background: #c00;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+button:hover { background: #a00; transform: scale(1.02); }
+
+a.btn-back {
+  display: inline-block;
+  text-align: center;
+  background: #888;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 8px;
+}
+a.btn-back:hover { background: #555; }
+
+/* ===== Dropdown ===== */
+.dropdown { position: relative; width: 100%; margin-bottom: 12px; }
+.dropdown-btn {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #c00;
+  border-radius: 8px;
+  background: #fff;
+  color: #c00;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 36px;
+  align-items: center;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #c00;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 5px;
+}
+.dropdown-content label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.dropdown-content label:hover { background: #fee; }
+.selected-name {
+  background: #c00;
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+/* ===== Status badges ===== */
+.status-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: bold;
+}
+.badge-busy { background: #ff5252; color: #fff; }
+.badge-leave { background: #ffa726; color: #fff; }
+
+footer {
+  background: #c00;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  margin-top: auto;
+  width: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="manager.html">⬅ กลับ</a>
+  ✏️ แก้ไขงาน | AUTODIDACTIC
+</header>
+
+<form id="editForm">
+  <input type="hidden" id="eventId">
+
+  <label>เลขที่งาน:</label>
+  <input type="text" id="job" class="input-line" readonly>
+
+  <label>หมายเลขงาน:</label>
+  <input type="text" id="jobNumber" class="input-line" readonly>
+
+  <label>วันที่เริ่ม:</label>
+  <input type="date" id="start" class="input-line" required>
+
+  <label>วันที่สิ้นสุด:</label>
+  <input type="date" id="end" class="input-line" required>
+
+  <label>ผู้ปฏิบัติงาน:</label>
+  <div class="dropdown">
+    <button type="button" class="dropdown-btn" id="titleBtn">เลือกชื่อ</button>
+    <div class="dropdown-content" id="titleList"></div>
+  </div>
+
+  <label>สถานที่:</label>
+  <input type="text" id="location" class="input-line" required readonly>
+
+  <label>รายละเอียดงาน:</label>
+  <textarea id="details" class="input-line" required></textarea>
+
+  <label>คนที่สั่งงาน:</label>
+  <div class="dropdown">
+    <button type="button" class="dropdown-btn" id="assignedByBtn">เลือกชื่อ</button>
+    <div class="dropdown-content" id="assignedByList"></div>
+  </div>
+
+  <label>สถานะ:</label>
+  <select id="status" class="input-line">
+    <option value="รออนุมัติ">รออนุมัติ</option>
+    <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+    <option value="เสร็จแล้ว">เสร็จแล้ว</option>
+  </select>
+
+  <button type="submit">💾 บันทึกการแก้ไข</button>
+  <a href="manager.html" class="btn-back">กลับ</a>
+</form>
+
+<footer>© 2025 AUTODIDACTIC SYSTEM</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+  authDomain: "events-666d6.firebaseapp.com",
+  projectId: "events-666d6",
+  storageBucket: "events-666d6.firebasestorage.app",
+  messagingSenderId: "589078390914",
+  appId: "1:589078390914:web:480ce96137ffac835aac9b",
+  measurementId: "G-97GD75S814"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("id");
+
+const titleList = document.getElementById("titleList");
+const assignedByList = document.getElementById("assignedByList");
+const titleBtn = document.getElementById("titleBtn");
+const assignedByBtn = document.getElementById("assignedByBtn");
+
+let originalEventData = null; // เก็บข้อมูลงานเดิมไว้
+
+// ✅ ฟังก์ชันเช็คผู้ปฏิบัติงานที่ไม่ว่าง (งานทับซ้อน + วันลา)
+async function loadAvailableWorkers(startDate, endDate) {
+  const usedNames = new Set();
+  const leaveNames = new Set();
+
+  if (!startDate || !endDate) return { usedNames, leaveNames };
+
+  // ดึงงานทั้งหมดเพื่อเช็คว่าใครทำงานอยู่
+  const eventsSnap = await getDocs(collection(db, "events"));
+  eventsSnap.forEach(docSnap => {
+    // ข้ามงานที่กำลังแก้ไขอยู่
+    if (docSnap.id === eventId) return;
+
+    const data = docSnap.data();
+    if (!data.start || !data.end) return;
+
+    const existingStart = new Date(data.start);
+    const existingEnd = new Date(data.end);
+    const newStart = new Date(startDate);
+    const newEnd = new Date(endDate);
+
+    // เช็คว่าช่วงเวลาทับซ้อนหรือไม่
+    const isOverlap = newStart <= existingEnd && newEnd >= existingStart;
+    if (isOverlap) {
+      (data.workers || []).forEach(n => usedNames.add(n));
+    }
+  });
+
+  // เช็ควันลาหยุด
+  const leavesSnap = await getDocs(collection(db, "leaves"));
+  leavesSnap.forEach(docSnap => {
+    const data = docSnap.data();
+    if (data.start <= endDate && data.end >= startDate) {
+      leaveNames.add(data.name);
+    }
+  });
+
+  return { usedNames, leaveNames };
+}
+
+// ✅ โหลด Dropdown พร้อมเช็คสถานะว่าง/ไม่ว่าง
+async function loadDropdowns() {
+  const startDate = document.getElementById("start").value;
+  const endDate = document.getElementById("end").value;
+
+  // ✅ ถ้ายังไม่ได้เลือกวันที่ ให้โหลดทุกคนแบบปกติ
+  if (!startDate || !endDate) {
+    titleList.innerHTML = "";
+    assignedByList.innerHTML = "";
+
+    const workersSnap = await getDocs(collection(db, "workers"));
+    workersSnap.forEach(d => {
+      const name = d.data().name;
+      titleList.innerHTML += `
+        <label>
+          <input type="checkbox" value="${name}"> ${name}
+        </label>`;
+    });
+
+    const assignersSnap = await getDocs(collection(db, "assigners"));
+    assignersSnap.forEach(d => {
+      const name = d.data().name;
+      assignedByList.innerHTML += `<label><input type="checkbox" value="${name}"> ${name}</label>`;
+    });
+    return;
+  }
+
+  // ดึงข้อมูลผู้ปฏิบัติงานที่ไม่ว่าง
+  const { usedNames, leaveNames } = await loadAvailableWorkers(startDate, endDate);
+
+  titleList.innerHTML = "";
+  assignedByList.innerHTML = "";
+
+  // โหลดผู้ปฏิบัติงาน
+  const workersSnap = await getDocs(collection(db, "workers"));
+  workersSnap.forEach(d => {
+    const name = d.data().name;
+    const isBusy = usedNames.has(name);
+    const isOnLeave = leaveNames.has(name);
+    const isUnavailable = isBusy || isOnLeave;
+
+    // ถ้าชื่อนี้เคยถูกเลือกในงานเดิม ให้ปลดล็อก
+    const wasOriginallySelected = originalEventData?.workers?.includes(name);
+    const shouldDisable = isUnavailable && !wasOriginallySelected;
+
+    let badge = "";
+    if (isBusy && !wasOriginallySelected) badge = `<span class="status-badge badge-busy">⛔ งานทับซ้อน</span>`;
+    else if (isOnLeave && !wasOriginallySelected) badge = `<span class="status-badge badge-leave">🏖 ลางาน</span>`;
+
+    titleList.innerHTML += `
+      <label style="opacity:${shouldDisable ? 0.5 : 1}">
+        <input type="checkbox" value="${name}" ${shouldDisable ? "disabled" : ""}> 
+        ${name} ${badge}
+      </label>`;
+  });
+
+  // โหลดคนที่สั่งงาน
+  const assignersSnap = await getDocs(collection(db, "assigners"));
+  assignersSnap.forEach(d => {
+    const name = d.data().name;
+    assignedByList.innerHTML += `<label><input type="checkbox" value="${name}"> ${name}</label>`;
+  });
+}
+
+// ✅ โหลดข้อมูลงานเดิม
+async function loadEventData() {
+  if (!eventId) return alert("ไม่พบ ID งานใน URL");
+
+  const ref = doc(db, "events", eventId);
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return alert("ไม่พบข้อมูลงานนี้");
+
+  const data = snap.data();
+  originalEventData = data; // เก็บข้อมูลเดิมไว้
+
+  document.getElementById("eventId").value = eventId;
+  document.getElementById("jobNumber").value = data.jobNumber || "";
+  document.getElementById("job").value = data.job || "";
+  document.getElementById("location").value = data.location || "";
+  document.getElementById("details").value = data.details || "";
+  document.getElementById("start").value = data.start || "";
+  document.getElementById("end").value = data.end || "";
+  document.getElementById("status").value = data.status || "รออนุมัติ";
+
+  // ✅ โหลด dropdown พร้อมเช็คสถานะ (ตามวันที่ที่กำหนด)
+  await loadDropdowns();
+
+  // ✅ เลือกชื่อที่เคยถูกเลือกไว้ หลังจากโหลด dropdown เสร็จแล้ว
+  setTimeout(() => {
+    titleList.querySelectorAll("input[type=checkbox]").forEach(cb => {
+      if (data.workers?.includes(cb.value)) cb.checked = true;
+    });
+
+    assignedByList.querySelectorAll("input[type=checkbox]").forEach(cb => {
+      if (data.assigners?.includes(cb.value)) cb.checked = true;
+    });
+
+    updateDropdownButton(titleList, titleBtn);
+    updateDropdownButton(assignedByList, assignedByBtn);
+  }, 100);
+}
+
+// ✅ บันทึกการแก้ไข
+document.getElementById("editForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const jobNumber = document.getElementById("jobNumber").value.trim();
+  const job = document.getElementById("job").value.trim();
+  const location = document.getElementById("location").value.trim();
+  const details = document.getElementById("details").value.trim();
+  const start = document.getElementById("start").value;
+  const end = document.getElementById("end").value;
+  const status = document.getElementById("status").value;
+
+  const workers = Array.from(
+    titleList.querySelectorAll("input[type=checkbox]:checked")
+  ).map(cb => cb.value);
+
+  const assigners = Array.from(
+    assignedByList.querySelectorAll("input[type=checkbox]:checked")
+  ).map(cb => cb.value);
+
+  await updateDoc(doc(db, "events", eventId), {
+    jobNumber, job, location, details, start, end, status, workers, assigners
+  });
+
+  alert("✅ บันทึกข้อมูลเรียบร้อย");
+  window.location.href = "manager.html";
+});
+
+// ✅ อัปเดตปุ่ม Dropdown
+function updateDropdownButton(list, btn) {
+  const selected = Array.from(list.querySelectorAll("input:checked"))
+    .map(cb => cb.value);
+
+  btn.innerHTML = selected.length
+    ? selected.map(n => `<span class='selected-name'>${n}</span>`).join(" ")
+    : "เลือกชื่อ";
+}
+
+// ✅ Toggle Dropdown
+titleBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  titleList.style.display = titleList.style.display === "block" ? "none" : "block";
+  assignedByList.style.display = "none";
+});
+
+assignedByBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  assignedByList.style.display = assignedByList.style.display === "block" ? "none" : "block";
+  titleList.style.display = "none";
+});
+
+// ✅ ปิด Dropdown เมื่อคลิกข้างนอก
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".dropdown")) {
+    titleList.style.display = "none";
+    assignedByList.style.display = "none";
+  }
+});
+
+titleList.addEventListener("change", () => {
+  updateDropdownButton(titleList, titleBtn);
+});
+
+assignedByList.addEventListener("change", () => {
+  updateDropdownButton(assignedByList, assignedByBtn);
+});
+
+// ✅ โหลดรายชื่อใหม่เมื่อเปลี่ยนวันที่
+document.getElementById("start").addEventListener("change", async () => {
+  await loadDropdowns();
+  
+  // ✅ เลือกคนเดิมกลับมาใหม่หลังจากโหลด dropdown
+  setTimeout(() => {
+    if (originalEventData?.workers) {
+      titleList.querySelectorAll("input[type=checkbox]").forEach(cb => {
+        if (originalEventData.workers.includes(cb.value)) cb.checked = true;
+      });
+      updateDropdownButton(titleList, titleBtn);
+    }
+  }, 100);
+});
+
+document.getElementById("end").addEventListener("change", async () => {
+  await loadDropdowns();
+  
+  // ✅ เลือกคนเดิมกลับมาใหม่หลังจากโหลด dropdown
+  setTimeout(() => {
+    if (originalEventData?.workers) {
+      titleList.querySelectorAll("input[type=checkbox]").forEach(cb => {
+        if (originalEventData.workers.includes(cb.value)) cb.checked = true;
+      });
+      updateDropdownButton(titleList, titleBtn);
+    }
+  }, 100);
+});
+
+loadEventData();
+</script>
+
+</body>
+</html>

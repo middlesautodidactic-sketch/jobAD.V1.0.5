@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard ระบบ AUTODIDACTIC (Admin)</title>
+
+  <!-- FullCalendar (CSS + JS) -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js" defer></script>
+
+  <style>
+    :root{
+      --red-600:#c72828;
+      --red-700:#9b1f1f;
+      --card-bg:#fff;
+      --muted:#666;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family: 'Prompt', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0; padding:0;
+      background: linear-gradient(to bottom,#fff 0%, #fdeaea 100%);
+      color:#111;
+    }
+  header {
+  background: linear-gradient(90deg, #c00, #f44336);
+  color: #fff;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+    .logo-title { display:flex; align-items:center; gap:12px; }
+    .logo-title img{ width: 50px; height: auto; background: rgba(255,255,255,0.8); padding: 5px; border-radius: 8px; }
+    header .nav-btn { color:#fff; background:rgba(0,0,0,0.18); padding:8px 12px; border-radius:8px; text-decoration:none; font-weight:700; }
+    main{ max-width:1100px; margin:24px auto; padding:0 18px; }
+    .top-actions { margin-bottom:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .btn { background:var(--red-600); color:#fff; border:none; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:700; box-shadow:0 6px 14px rgba(0,0,0,0.08); }
+    .btn.secondary{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.18); }
+    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+    @media(max-width:880px){ .grid{ grid-template-columns:1fr } }
+    .card{
+      background:var(--card-bg);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 10px 28px rgba(0,0,0,0.06);
+      border:2px solid rgba(199,40,40,0.08);
+    }
+    .card h3{ margin:0 0 8px 0; color:var(--red-600); font-size:18px; display:flex; align-items:center; gap:8px; }
+    .small-muted{ color:var(--muted); font-size:13px; }
+    .list-item{ border:1px solid rgba(199,40,40,0.12); background:#fff6f6; padding:10px; border-radius:8px; margin-bottom:10px; }
+    .list-item b{ color:#111; }
+    .flex-row{ display:flex; gap:8px; align-items:center; }
+    .grow{ flex:1; }
+    input[type="text"], select{ padding:8px 10px; border-radius:8px; border:1px solid #ddd; width:100%; }
+    #holidayCalendar{ max-width:100%; min-height:300px; }
+    footer {
+  background: linear-gradient(90deg, #c00, #f44336);
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+  font-size: 13px;
+  box-shadow: 0 -3px 6px rgba(0,0,0,0.1);
+}
+    .tiny { font-size:12px; color:#444; }
+    .tiny2 { font-size:12px; color:#ffffff; }
+    .action-row{ margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
+    .danger { background:#ff6b6b; }
+    /* จำกัด 5 รายการ + Scroll bar */
+#eventListPending,
+#eventListCompleted,
+#leaveList {
+  max-height: 350px;   /* ความสูงพอดีกับ 5 รายการ */
+  overflow-y: auto;
+  padding-right: 6px;  /* กันไม่ให้ scrollbar ทับเนื้อหา */
+}
+
+/* เพื่อความสวยงามของ scrollbar */
+#eventListPending::-webkit-scrollbar,
+#eventListCompleted::-webkit-scrollbar,
+#leaveList::-webkit-scrollbar {
+  width: 6px;
+}
+
+#eventListPending::-webkit-scrollbar-thumb,
+#eventListCompleted::-webkit-scrollbar-thumb,
+#leaveList::-webkit-scrollbar-thumb {
+  background: #c00;
+  border-radius: 4px;
+}
+
+#eventListPending::-webkit-scrollbar-track,
+#eventListCompleted::-webkit-scrollbar-track,
+#leaveList::-webkit-scrollbar-track {
+  background: #ffe5e5;
+}
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-title">
+    <img src="ad_logo-Photoroom.png" alt="logo">
+    <div>
+      <div style="font-weight:800; font-size:18px;">🛠 ระบบจัดการ AUTODIDACTIC (Admin)</div>
+      <div class="tiny2">Dashboard - จัดการงาน วันลา รายชื่อ และวันหยุด</div>
+    </div>
+  </div>
+  <nav>
+    <a href="calendar_admin.html" class="nav-btn">กลับไปหน้าหลัก</a>
+  </nav>
+</header>
+
+<main>
+  <div class="top-actions">
+    <a href="calendar_admin.html" class="btn">← กลับ</a>
+    <a href="export-csv.html" class="btn">⬇ Export CSV</a>
+    <div style="flex:1"></div>
+    <div class="small-muted">© 2025 AUTODIDACTIC</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- Events - กำลังดำเนินการ -->
+    <section class="card" id="eventsCardPending">
+      <h3>📋 รายการงาน (กำลังดำเนินการ)</h3>
+      <div id="eventListPending" class="small-muted">⏳ กำลังโหลด...</div>
+    </section>
+
+    <!-- Leaves -->
+    <section class="card" id="leavesCard">
+      <h3>🏖 รายการวันลา</h3>
+      <div id="leaveList" class="small-muted">⏳ กำลังโหลด...</div>
+    </section>
+
+    <!-- Events - เรียบร้อย -->
+    <section class="card" id="eventsCardCompleted">
+      <h3>📋 รายการงาน (เรียบร้อย)</h3>
+      <div id="eventListCompleted" class="small-muted">⏳ กำลังโหลด...</div>
+    </section>
+
+    <!-- Names (span full) -->
+    <section class="card" style="grid-column:1 / -1;">
+      <h3>👤 จัดการรายชื่อ</h3>
+      <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
+        <select id="nameType" style="width:200px;">
+          <option value="worker">ผู้ปฏิบัติงาน</option>
+          <option value="assigner">คนที่สั่งงาน</option>
+        </select>
+        <input id="newName" type="text" placeholder="กรอกชื่อใหม่..." />
+        <button id="addNameBtn" class="btn">เพิ่มชื่อ</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px;">
+        <div>
+          <h4 class="small-muted">ผู้ปฏิบัติงาน</h4>
+          <div id="workerList">⏳ กำลังโหลด...</div>
+        </div>
+        <div>
+          <h4 class="small-muted">คนที่สั่งงาน</h4>
+          <div id="assignerList">⏳ กำลังโหลด...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Holidays -->
+    <section class="card" id="holidayCard" style="grid-column:1 / -1;">
+      <h3>🏢 ปฏิทินวันหยุดประจำบริษัท</h3>
+      <div id="holidayCalendar"></div>
+      <div class="tiny" style="margin-top:8px;">คลิกวันที่เพื่อเพิ่มวันหยุด — คลิกเหตุการณ์เพื่อยืนยันการลบ</div>
+    </section>
+
+  </div>
+</main>
+
+<footer>© 2025 ระบบ AUTODIDACTIC — สงวนลิขสิทธิ์</footer>
+
+<!-- Firebase + App Logic -->
+<script type="module">
+  // Firebase v10 modular (Firestore)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    deleteDoc,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+    authDomain: "events-666d6.firebaseapp.com",
+    projectId: "events-666d6",
+    storageBucket: "events-666d6.firebasestorage.app",
+    messagingSenderId: "589078390914",
+    appId: "1:589078390914:web:480ce96137ffac835aac9b",
+    measurementId: "G-97GD75S814"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  /* ---------- Utility DOM ---------- */
+  const $ = id => document.getElementById(id);
+
+  /* ---------- Ensure default docs (optional) ---------- */
+  async function ensureDefaultDocs(){
+    // (keeps simple - only run once if collections empty)
+    const w = await getDocs(collection(db,"workers"));
+    if (w.empty) {
+      await addDoc(collection(db,"workers"), { name: "User A" });
+      await addDoc(collection(db,"workers"), { name: "User B" });
+    }
+    const a = await getDocs(collection(db,"assigners"));
+    if (a.empty) await addDoc(collection(db,"assigners"), { name: "Admin" });
+
+    const l = await getDocs(collection(db,"leaves"));
+    if (l.empty) {
+      await addDoc(collection(db,"leaves"), {
+        name: "User A", reason: "ประชุม", start: "2025-01-10", end: "2025-01-10"
+      });
+    }
+
+    const h = await getDocs(collection(db,"holidays"));
+    if (h.empty) {
+      await addDoc(collection(db,"holidays"), { name: "วันขึ้นปีใหม่", date: "2025-01-01" });
+    }
+
+    const e = await getDocs(collection(db,"events"));
+    if (e.empty) {
+      await addDoc(collection(db,"events"), {
+        jobNumber: "JOB-000",
+        job: "งานตัวอย่าง",
+        location: "สำนักงานใหญ่",
+        details: "เอกสารตัวอย่างจากระบบ",
+        orderDate: "2025-01-01",
+        start: "2025-01-01",
+        end: "2025-01-02",
+        workers: ["User A"],
+        assigners: ["Admin"],
+        jobTypes: ["ทดสอบ"],
+        contactPerson: "Contact",
+        phoneNumber: "0000000000",
+        status: "รออนุมัติ"
+      });
+    }
+  }
+
+  /* ---------- Load Events ---------- */
+  async function loadEvents(){
+    const eventListPending = $("eventListPending");
+    const eventListCompleted = $("eventListCompleted");
+    
+    eventListPending.innerHTML = "⏳ กำลังโหลด...";
+    eventListCompleted.innerHTML = "⏳ กำลังโหลด...";
+    
+    const snap = await getDocs(collection(db,"events"));
+    
+    if (snap.empty) { 
+      eventListPending.innerHTML = "<i>ไม่มีข้อมูลงาน</i>"; 
+      eventListCompleted.innerHTML = "<i>ไม่มีข้อมูลงาน</i>"; 
+      return; 
+    }
+
+    eventListPending.innerHTML = "";
+    eventListCompleted.innerHTML = "";
+    
+    let hasPending = false;
+    let hasCompleted = false;
+
+    snap.forEach(docSnap=>{
+      const d = docSnap.data();
+      const status = d.status || "";
+      
+      // ฟังก์ชันสร้าง element
+      const createEventElement = () => {
+        const div = document.createElement("div");
+        div.className = "list-item";
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">
+            <div>
+              <strong>${d.jobNumber || "-"}</strong> — ${d.location || "-"}<br>
+              <span class="small-muted">${(d.jobTypes||[]).join(", ")} • ${d.start || "-"} → ${d.end || "-"}</span><br>
+              <span class="tiny" style="color: ${status === 'อนุมัติ' ? '#28a745' : status === 'รออนุมัติ' ? '#ffc107' : status === 'เรียบร้อย' ? '#007bff' : '#dc3545'};">
+                สถานะ: ${status}
+              </span>
+            </div>
+            <div style="text-align:right">
+              <div class="tiny">${(d.assigners||[]).join(", ")}</div>
+              <div class="action-row" style="justify-content:flex-end; margin-top:8px;">
+                <button class="btn" onclick="printEvent('${docSnap.id}')">🖨 พิมพ์</button>
+                <button class="btn" onclick="editEvent('${docSnap.id}')">✏ แก้ไข</button>
+                <button class="btn danger" onclick="deleteEvent('${docSnap.id}')">🗑 ลบ</button>
+              </div>
+            </div>
+          </div>
+        `;
+        return div;
+      };
+      
+      // แยกแสดงตามสถานะ
+      if (status === "อนุมัติ" || status === "รออนุมัติ") {
+        eventListPending.appendChild(createEventElement());
+        hasPending = true;
+      } 
+      
+      if (status === "เรียบร้อย" || status === "ไม่เรียบร้อย") {
+        eventListCompleted.appendChild(createEventElement());
+        hasCompleted = true;
+      }
+    });
+    
+    if (!hasPending) {
+      eventListPending.innerHTML = "<i>ไม่มีงานที่กำลังดำเนินการ</i>";
+    }
+    if (!hasCompleted) {
+      eventListCompleted.innerHTML = "<i>ไม่มีงานที่เสร็จสมบูรณ์</i>";
+    }
+  }
+
+  window.deleteEvent = async (id) => {
+    if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
+    await deleteDoc(doc(db,"events",id));
+    await loadEvents();
+  };
+
+  window.printEvent = async (id) => {
+    const snap = await getDoc(doc(db,"events",id));
+    const d = snap.data() || {};
+    const url = new URL("report.html", location.href);
+    url.searchParams.set("job", d.jobNumber || d.job || "-");
+    url.searchParams.set("start", d.start || "");
+    url.searchParams.set("end", d.end || "");
+    window.open(url, "_blank");
+  };
+
+  window.editEvent = (id) => {
+    const url = new URL("edit.html", location.href);
+    url.searchParams.set("id", id);
+    location.href = url;
+  };
+
+  /* ---------- Leaves ---------- */
+  async function loadLeaves(){
+    const leaveList = $("leaveList");
+    leaveList.innerHTML = "⏳ กำลังโหลด...";
+    const snap = await getDocs(collection(db,"leaves"));
+    if (snap.empty) { leaveList.innerHTML = "<i>ไม่มีข้อมูลวันลา</i>"; return; }
+
+    leaveList.innerHTML = "";
+    snap.forEach(docSnap=>{
+      const d = docSnap.data();
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `
+        <strong>${d.name}</strong> <span class="small-muted">(${d.reason})</span><br>
+        <span class="tiny">${d.start} → ${d.end}</span>
+        <div class="action-row">
+          <button class="btn danger" onclick="deleteLeave('${docSnap.id}')">🗑 ลบ</button>
+        </div>
+      `;
+      leaveList.appendChild(div);
+    });
+  }
+
+  window.deleteLeave = async (id) => {
+    if (!confirm("ต้องการลบวันลานี้หรือไม่?")) return;
+    await deleteDoc(doc(db,"leaves",id));
+    await loadLeaves();
+  };
+
+  /* ---------- Names ---------- */
+  async function loadNames(){
+    const workerList = $("workerList");
+    const assignerList = $("assignerList");
+    workerList.innerHTML = "⏳ กำลังโหลด...";
+    assignerList.innerHTML = "⏳ กำลังโหลด...";
+
+    const wSnap = await getDocs(collection(db,"workers"));
+    const aSnap = await getDocs(collection(db,"assigners"));
+
+    workerList.innerHTML = "";
+    assignerList.innerHTML = "";
+
+    wSnap.forEach(d=>{
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `${d.data().name} <div class="action-row"><button class="btn danger" onclick="deleteName('workers','${d.id}')">❌ ลบ</button></div>`;
+      workerList.appendChild(div);
+    });
+
+    aSnap.forEach(d=>{
+      const div = document.createElement("div");
+      div.className = "list-item";
+      div.innerHTML = `${d.data().name} <div class="action-row"><button class="btn danger" onclick="deleteName('assigners','${d.id}')">❌ ลบ</button></div>`;
+      assignerList.appendChild(div);
+    });
+  }
+
+  window.deleteName = async (col,id) => {
+    if (!confirm("ต้องการลบชื่อนี้ใช่หรือไม่?")) return;
+    await deleteDoc(doc(db,col,id));
+    await loadNames();
+  };
+
+  $("addNameBtn").addEventListener("click", async ()=>{
+    const name = $("newName").value.trim();
+    const type = $("nameType").value;
+    if (!name) return alert("กรุณากรอกชื่อก่อน");
+    const col = type === "worker" ? "workers" : "assigners";
+    await addDoc(collection(db,col), { name });
+    $("newName").value = "";
+    await loadNames();
+  });
+
+  /* ---------- Holidays & FullCalendar ---------- */
+  async function loadHolidays(){
+    const snap = await getDocs(collection(db,"holidays"));
+    const arr = [];
+    snap.forEach(d=>{
+      arr.push({ id: d.id, title: d.data().name, start: d.data().date, allDay: true });
+    });
+    return arr;
+  }
+
+  async function initHolidayCalendar(){
+    const calEl = $("holidayCalendar");
+    const holidays = await loadHolidays();
+
+    const calendar = new FullCalendar.Calendar(calEl, {
+      initialView: "dayGridMonth",
+      selectable: true,
+      events: holidays,
+      dateClick: async (info) => {
+        const name = prompt("กรอกชื่อวันหยุด:");
+        if (name) {
+          const ref = await addDoc(collection(db,"holidays"), { name, date: info.dateStr });
+          calendar.addEvent({ id: ref.id, title: name, start: info.dateStr, allDay: true });
+        }
+      },
+      eventClick: async (info) => {
+        if (confirm(`ลบวันหยุด "${info.event.title}" หรือไม่?`)) {
+          await deleteDoc(doc(db,"holidays", info.event.id));
+          info.event.remove();
+        }
+      }
+    });
+
+    calendar.render();
+  }
+
+  /* ---------- Init ---------- */
+  (async function initAll(){
+    try {
+      await ensureDefaultDocs();
+    } catch(e){
+      console.warn("ensureDefaultDocs failed:", e);
+    }
+    await loadEvents();
+    await loadLeaves();
+    await loadNames();
+    await initHolidayCalendar();
+  })();
+
+</script>
+
+</body>
+</html>

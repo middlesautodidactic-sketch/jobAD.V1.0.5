@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เข้าสู่ระบบ Admin</title>
+<style>
+/* ===== Global ===== */
+body {
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(to bottom, #ffffff 0%, #fdeaea 100%);
+  color: #333;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Header ===== */
+header {
+  background: linear-gradient(90deg, #c00, #f44336);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-container img {
+  width: 50px;
+  height: auto;
+  background: rgba(255,255,255,0.8);
+  padding: 4px;
+  border-radius: 8px;
+}
+header div {
+  font-size: 18px;
+  font-weight: 600;
+}
+header nav a {
+  color: #fff;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+header nav a:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* ===== Login Box ===== */
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.container {
+  max-width: 400px;
+  width: 100%;
+  padding: 30px 25px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  text-align: center;
+  transition: transform 0.3s;
+  animation: fadeIn 0.6s ease;
+}
+.container:hover { transform: translateY(-3px); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  margin-bottom: 25px;
+  color: #c00;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ===== Input Fields ===== */
+.input-line {
+  width: 100%;
+  padding: 12px 10px;
+  margin: 15px 0;
+  border: 1.5px solid #c00;
+  border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+  color: #c00;
+  background: #fff;
+  transition: 0.3s;
+}
+.input-line:focus {
+  border-color: #a00;
+  box-shadow: 0 0 6px rgba(204,0,0,0.3);
+}
+
+/* ===== Buttons ===== */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 8px;
+  background: #c00;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+button:hover {
+  background: #a00;
+  transform: translateY(-2px);
+}
+
+/* ===== Footer ===== */
+footer {
+  background: linear-gradient(90deg, #c00, #f44336);
+  color: #fff;
+  text-align: center;
+  padding: 14px 20px;
+  font-size: 14px;
+  box-shadow: 0 -3px 6px rgba(0,0,0,0.1);
+}
+
+/* ===== Responsive ===== */
+@media (max-width:600px){
+  header {
+    flex-direction: column;
+    gap: 8px;
+  }
+  header nav {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .container { padding: 20px; }
+  h2 { font-size: 18px; }
+  .input-line { font-size: 14px; padding: 10px; }
+  button { font-size: 14px; padding: 10px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="ad_logo-Photoroom.png" alt="Logo">
+  </div>
+  <div>📅 ระบบปฏิทินงาน (Admin)</div>
+  <nav><a href="calendar_admin.html">กลับไปหน้าหลัก</a></nav>
+</header>
+
+<main>
+  <div class="container">
+    <h2>🔑 เข้าจัดการระบบข้อมูล</h2>
+    <form id="loginForm">
+      <input type="password" id="password" class="input-line" placeholder="รหัสผ่าน" required>
+      <button type="submit">เข้าสู่ระบบ</button>
+    </form>
+  </div>
+</main>
+
+<footer>
+  © 2025 ระบบปฏิทินงาน. สงวนลิขสิทธิ์
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const pass = document.getElementById("password").value.trim();
+
+  if(pass === "1234"){
+    Swal.fire({
+      toast: true,
+      position: 'center',
+      icon: 'success',
+      title: 'เข้าสู่ระบบสำเร็จ 🎉',
+      text: 'ยินดีต้อนรับเข้าสู่ระบบผู้ดูแล',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      background: "#fff",
+      color: "#333",
+      didClose: () => {
+        window.location.href = "adminV2.html";
+      }
+    });
+  } else {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'error',
+      title: 'เข้าสู่ระบบไม่สำเร็จ ❌',
+      text: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+      showConfirmButton: false,
+      timer: 1000,
+      timerProgressBar: true,
+      background: "#fff",
+      color: "#333"
+    });
+  }
+});
+</script>
+
+</body>
+</html>

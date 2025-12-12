@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>👔 Manager - ตรวจสอบและแก้ไขงาน</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ====== Global (มือถือเป็นหลัก) ====== */
+body {
+  font-family: 'Prompt', sans-serif;
+  background: #f9f9f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+header {
+  background: linear-gradient(90deg, #c00, #f44336);
+  color: #fff;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+header nav a {
+  color: #fff;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 8px;
+  transition: 0.3s;
+}
+header nav a:hover {
+  background: rgba(255,255,255,0.3);
+}
+.logo-container img {
+  width: 50px;
+  height: auto;
+  background: rgba(255,255,255,0.85);
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.user-name {
+  background: rgba(255,255,255,0.2);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ===== Content ===== */
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  color: #c00;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ===== Event Cards ===== */
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.event-list li {
+  border-left: 6px solid #c00;
+  border-radius: 10px;
+  padding: 15px;
+  background: #fff8f8;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s;
+  margin-bottom: 15px;
+}
+
+.event-list li:hover { transform: translateY(-3px); }
+
+.event-details { 
+  line-height: 1.6; 
+  font-size: 15px; 
+}
+
+footer {
+  background: linear-gradient(90deg, #c00, #f44336);
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+  font-size: 13px;
+  box-shadow: 0 -3px 6px rgba(0,0,0,0.1);
+  position: sticky;
+  bottom: 0;
+}
+
+/* ===== Buttons ===== */
+button, .btn-link {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.approve { background: #4caf50; color: #fff; }
+.quick-approve { background: #ff9800; color: #fff; }
+.reject { background: #f44336; color: #fff; }
+.edit { background: #1976d2; color: #fff; text-decoration:none; display:inline-block; text-align:center; padding:8px 14px; border-radius:8px;}
+button:hover, .edit:hover { opacity: 0.9; }
+
+.btn-link {
+  background: rgba(0,0,0,0.1);
+  color: #fff;
+  text-decoration: none;
+}
+
+.dropdown {
+  position: relative;
+  display: block;
+  left: 0;
+}
+
+.dropbtn {
+  background-color: #c00;
+  color: white;
+  padding: 10px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background-color: #fff;
+  min-width: 180px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  z-index: 1000;
+}
+
+.dropdown-content a {
+  color: #333;
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+  transition: background 0.2s;
+}
+
+.dropdown-content a:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* ===== Modal Popup ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  animation: slideDown 0.3s;
+}
+
+@keyframes slideDown {
+  from { 
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #4caf50;
+  font-size: 22px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #fafafa;
+}
+
+.checkbox-option:hover {
+  border-color: #4caf50;
+  background: #f1f8f4;
+}
+
+.checkbox-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  cursor: pointer;
+  accent-color: #4caf50;
+}
+
+.checkbox-option label {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.checkbox-option input[type="radio"]:checked + label {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn-confirm {
+  background: #4caf50;
+  color: #fff;
+}
+
+.btn-cancel {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.btn-confirm:hover {
+  background: #45a049;
+}
+
+.btn-cancel:hover {
+  background: #d0d0d0;
+}
+
+/* ====== Responsive (มือถือ / จอเล็ก) ====== */
+@media (max-width: 600px), (orientation: portrait), (orientation: landscape) {
+  header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: clamp(10px, 2vw, 20px);
+    gap: clamp(10px, 2vw, 20px);
+  }
+
+  .nav-buttons {
+    display: none;
+  }
+
+  .dropdown {
+    display: block;
+    left: 0;
+  }
+
+  main {
+    padding: clamp(12px, 2vw, 24px);
+  }
+  
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    font-size: 12px;
+    padding: 10px;
+  }
+  
+  .modal-content {
+    margin: 25% auto;
+    width: 85%;
+  }
+}
+
+/* ====== Desktop (≥1200px) ====== */
+@media (min-width: 1200px) {
+  main {
+    max-width: 1100px;
+    padding: 24px;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .dropdown {
+    display: none;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="ad_logo-Photoroom.png" alt="Logo">
+  </div>
+  <div style="font-size:18px;">
+    👔 ตรวจสอบและแก้ไขงาน (Manager)
+    <div class="user-name" id="userNameDisplay">กำลังโหลด...</div>
+  </div>
+
+  <div class="dropdown">
+    <button class="dropbtn">☰ เมนู</button>
+    <div class="dropdown-content">
+    <a href="#" onclick="navigateWithName('calendarM.html')">📅 ปฏิทินงาน</a>
+    <a href="#" onclick="navigateWithName('result.html')">📊 ผลสรุปงาน</a>
+    <a href="index.html">🏠 หน้าหลัก</a>
+    </div>
+  </div>
+
+  <nav class="nav-buttons">
+    <a href="#" onclick="navigateWithName('calendarM.html')">📅 ปฏิทินงาน</a>
+    <a href="#" onclick="navigateWithName('result.html')">📊 ผลสรุปงาน</a>
+    <a href="index.html">🏠 หน้าหลัก</a>
+  </nav>
+</header>
+
+<main>
+  <h2>📋 รายการงานที่รอตรวจสอบ</h2>
+  <ul id="eventList" class="event-list"></ul>
+</main>
+
+<!-- Modal Popup -->
+<div id="approvalModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>✅ ยืนยันการอนุมัติงาน</h3>
+    </div>
+    
+    <div class="checkbox-group">
+      <div class="checkbox-option">
+        <input type="radio" id="signSelf" name="signType" value="เซ็นเอง" checked>
+        <label for="signSelf">✍️ เซ็นเอง</label>
+      </div>
+      
+      <div class="checkbox-option">
+        <input type="radio" id="noSign" name="signType" value="ไม่เซ็นเอง">
+        <label for="noSign">📝 ไม่เซ็นเอง</label>
+      </div>
+    </div>
+    
+    <div class="modal-buttons">
+      <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-confirm" onclick="confirmApproval()">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2025 ระบบจัดการงาน | AUTODIDACTIC SYSTEM
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { 
+  getFirestore, collection, getDocs, doc, updateDoc, setDoc, getDoc, increment 
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+  authDomain: "events-666d6.firebaseapp.com",
+  projectId: "events-666d6",
+  storageBucket: "events-666d6.firebasestorage.app",
+  messagingSenderId: "589078390914",
+  appId: "1:589078390914:web:480ce96137ffac835aac9b",
+  measurementId: "G-97GD75S814"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const eventList = document.getElementById("eventList");
+const modal = document.getElementById("approvalModal");
+let currentEventId = null;
+let currentWorkers = [];
+let managerName = "Manager"; // Default
+
+// ดึงชื่อจาก URL
+function getManagerNameFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const name = urlParams.get('name');
+  
+  if (name) {
+    managerName = decodeURIComponent(name);
+    document.getElementById('userNameDisplay').textContent = `👤 ${managerName}`;
+  } else {
+    document.getElementById('userNameDisplay').textContent = '👤 Manager';
+  }
+  
+  return managerName;
+}
+
+// ฟังก์ชันสำหรับเปลี่ยนหน้าพร้อมส่งชื่อไปด้วย
+window.navigateWithName = function(page) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const name = urlParams.get('name');
+  
+  if (name) {
+    window.location.href = `${page}?name=${encodeURIComponent(name)}`;
+  } else {
+    window.location.href = page;
+  }
+  
+  return false; // ป้องกันการ navigate แบบปกติ
+};
+
+// เรียกใช้ตอน load หน้า
+getManagerNameFromURL();
+
+function formatDateThai(dateStr) {
+  if (!dateStr || dateStr === "-") return "-";
+  
+  try {
+    const date = new Date(dateStr + "T00:00:00");
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear() + 543;
+    
+    return `${day}-${month}-${year}`;
+  } catch (err) {
+    return dateStr;
+  }
+}
+
+async function loadEvents() {
+  eventList.innerHTML = "";
+  const snapshot = await getDocs(collection(db, "events"));
+
+  // ตรวจสอบว่าเป็น "ฉัตรชัย สมิตกาญจน์" หรือไม่
+  const isChatchai = managerName === "ฉัตรชัย สมิตกาญจน์";
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+
+    if (["อนุมัติ", "อนุมัติด่วน","เรียบร้อย", "ไม่เรียบร้อย"].includes(data.status)) return;
+
+    const li = document.createElement("li");
+    
+    // เพิ่มชื่อ manager ลงใน URL ของปุ่ม edit
+    const urlParams = new URLSearchParams(window.location.search);
+    const nameParam = urlParams.get('name') ? `&name=${encodeURIComponent(urlParams.get('name'))}` : '';
+    
+    // แสดงปุ่มอนุมัติด่วนเฉพาะคุณฉัตรชัย
+    const quickApproveBtn = isChatchai 
+      ? `<button class="quick-approve" onclick="quickApproveEvent('${docSnap.id}', ${JSON.stringify(data.workers || []).replace(/"/g, '&quot;')})">⚡ อนุมัติด่วน</button>`
+      : '';
+    
+    li.innerHTML = `
+      <div class="event-details">
+        <strong>หมายเลขงาน:</strong> ${data.jobNumber || "-"}<br>
+        <strong>ผู้ปฏิบัติงาน:</strong> ${(data.workers || []).join(", ") || "-"}<br>
+        <strong>สถานที่:</strong> ${data.location || "-"}<br>
+        <strong>ลักษณะงาน:</strong> ${(data.jobTypes || []).join(", ") || "-"}<br>
+        <strong>วันที่:</strong> ${formatDateThai(data.start) || "-"} → ${formatDateThai(data.end) || "-"}<br>
+        <strong>สถานะ:</strong> ${data.status || "รออนุมัติ"}
+      </div>
+      <div style="margin-top:10px;">
+        <a href="editM.html?id=${docSnap.id}${nameParam}" class="edit">✏️ เพิ่มชื่อ / แก้ไข</a>
+        <button class="reject" onclick="rejectEvent('${docSnap.id}')">❌ ปฏิเสธ</button>
+        ${quickApproveBtn}
+        <button class="approve" onclick="approveEvent('${docSnap.id}', ${JSON.stringify(data.workers || []).replace(/"/g, '&quot;')})">✅ อนุมัติ</button>
+      </div>
+    `;
+    eventList.appendChild(li);
+  });
+}
+
+loadEvents();
+
+window.quickApproveEvent = async function(id, workers) {
+  if (!confirm("⚡ ยืนยันการอนุมัติด่วนงานนี้หรือไม่?\n(จะบันทึกสถานะเป็น 'อนุมัติด่วน' และไม่ต้องเลือกประเภทการเซ็น)")) {
+    return;
+  }
+
+  try {
+    // อัปเดตสถานะงานเป็น "อนุมัติด่วน" พร้อมบันทึกชื่อผู้อนุมัติ
+    await updateDoc(doc(db, "events", id), { 
+      status: "อนุมัติด่วน",
+      signType: "เซ็นเอง",
+      quickApproval: true,
+      quickApprovalTime: new Date().toISOString(),
+      approvedBy: managerName
+    });
+    
+    // อัปเดต workerCount สำหรับแต่ละคน (+1)
+    const workerList = workers || [];
+    for (const worker of workerList) {
+      if (worker && worker.trim()) {
+        const workerRef = doc(db, "workerCount", worker.trim());
+        const workerDoc = await getDoc(workerRef);
+        
+        if (workerDoc.exists()) {
+          await updateDoc(workerRef, {
+            count: increment(1),
+            lastUpdated: new Date().toISOString()
+          });
+        } else {
+          await setDoc(workerRef, {
+            name: worker.trim(),
+            count: 1,
+            completed: 0,
+            incomplete: 0,
+            lastUpdated: new Date().toISOString()
+          });
+        }
+      }
+    }
+    
+    alert("⚡ อนุมัติด่วนสำเร็จ!");
+    loadEvents();
+  } catch (error) {
+    console.error("Error quick approving:", error);
+    alert("❌ เกิดข้อผิดพลาดในการอนุมัติด่วน");
+  }
+};
+
+window.approveEvent = function(id, workers) {
+  currentEventId = id;
+  currentWorkers = workers || [];
+  modal.style.display = "block";
+  document.getElementById("signSelf").checked = true;
+};
+
+window.closeModal = function() {
+  modal.style.display = "none";
+  currentEventId = null;
+  currentWorkers = [];
+};
+
+window.confirmApproval = async function() {
+  const selectedSign = document.querySelector('input[name="signType"]:checked').value;
+  
+  // อัปเดตสถานะงานพร้อมบันทึกชื่อผู้อนุมัติ
+  await updateDoc(doc(db, "events", currentEventId), { 
+    status: "อนุมัติ",
+    signType: selectedSign,
+    approvedBy: managerName,
+    approvedTime: new Date().toISOString()
+  });
+  
+  // อัปเดต workerCount สำหรับแต่ละคน (+1)
+  for (const worker of currentWorkers) {
+    if (worker && worker.trim()) {
+      const workerRef = doc(db, "workerCount", worker.trim());
+      const workerDoc = await getDoc(workerRef);
+      
+      if (workerDoc.exists()) {
+        // ถ้ามีอยู่แล้วให้เพิ่ม count
+        await updateDoc(workerRef, {
+          count: increment(1),
+          lastUpdated: new Date().toISOString()
+        });
+      } else {
+        // ถ้ายังไม่มีให้สร้างใหม่
+        await setDoc(workerRef, {
+          name: worker.trim(),
+          count: 1,
+          completed: 0,
+          incomplete: 0,
+          lastUpdated: new Date().toISOString()
+        });
+      }
+    }
+  }
+  
+  alert(`✅ อนุมัติงานสำเร็จ (${selectedSign})`);
+  closeModal();
+  loadEvents();
+};
+
+window.rejectEvent = async function(id) {
+  if(confirm("❌ ยืนยันการปฏิเสธงานนี้หรือไม่?")) {
+    await updateDoc(doc(db, "events", id), { 
+      status: "ปฏิเสธ",
+      rejectedBy: managerName,
+      rejectedTime: new Date().toISOString()
+    });
+    loadEvents();
+  }
+};
+
+// ปิด modal เมื่อคลิกนอกกรอบ
+window.onclick = function(event) {
+  if (event.target == modal) {
+    closeModal();
+  }
+};
+
+</script>
+
+</body>
+</html>

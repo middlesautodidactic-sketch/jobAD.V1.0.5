@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            background: linear-gradient(to right, #FF4B2B, #FF416C);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .login-header p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .login-body {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i.fa-lock,
+        .input-wrapper i.fa-user {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s, transform 0.2s;
+            z-index: 10;
+            font-size: 16px;
+        }
+
+        .toggle-password:hover {
+            color: #FF4B2B;
+        }
+
+        .toggle-password:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        input#password {
+            padding: 15px 45px 15px 45px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #FF4B2B;
+            box-shadow: 0 0 0 3px rgba(255, 75, 43, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #FF4B2B, #FF416C);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 75, 43, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .welcome-container {
+            display: none;
+            text-align: center;
+            padding: 60px 30px;
+        }
+
+        .welcome-container.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .welcome-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .welcome-container h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-container .user-name {
+            color: #FF4B2B;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        @media screen and (max-width: 480px) {
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .login-body {
+                padding: 30px 20px;
+            }
+
+            .welcome-icon {
+                font-size: 60px;
+            }
+
+            .welcome-container h2 {
+                font-size: 22px;
+            }
+
+            .welcome-container .user-name {
+                font-size: 26px;
+            }
+        }
+        .user-name::before {
+            color: #333;
+    content: 'คุณ ';
+}
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Login Form -->
+        <div id="loginSection">
+            <div class="login-header">
+                <h1>เข้าสู่ระบบ</h1>
+                <p>ยินดีต้อนรับกลับมา</p>
+            </div>
+            
+            <div class="login-body">
+                <div class="message" id="loginMessage"></div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="userId">User ID</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="userId" placeholder="กรอก User ID" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="กรอกรหัสผ่าน" required>
+                            <i class="fas fa-eye-slash toggle-password" id="togglePassword"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                    </button>
+
+                    <button type="button" id="backBtn" style="margin-top: 10px; background: linear-gradient(to right, #6c757d, #5a6268);">
+                        <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Welcome Section -->
+        <div id="welcomeSection" class="welcome-container">
+            <div class="welcome-icon">👋</div>
+            <h2>สวัสดี</h2>
+            <div class="user-name" id="userName"></div>
+            <p style="color: #666; margin-bottom: 20px;">เข้าสู่ระบบสำเร็จ!</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+            authDomain: "events-666d6.firebaseapp.com",
+            projectId: "events-666d6",
+            storageBucket: "events-666d6.appspot.com",
+            messagingSenderId: "589078390914",
+            appId: "1:589078390914:web:480ce96137ffac835aac9b",
+            measurementId: "G-97GD75S814"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Elements
+        const loginForm = document.getElementById('loginForm');
+        const loginMessage = document.getElementById('loginMessage');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginSection = document.getElementById('loginSection');
+        const welcomeSection = document.getElementById('welcomeSection');
+        const userNameDisplay = document.getElementById('userName');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        // Toggle Password Visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+            this.classList.toggle('fa-eye');
+        });
+
+        // Show message function
+        function showMessage(message, isSuccess) {
+            loginMessage.textContent = message;
+            loginMessage.className = 'message show ' + (isSuccess ? 'success' : 'error');
+            setTimeout(() => {
+                loginMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Handle Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = document.getElementById('userId').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!userId || !password) {
+                showMessage('กรุณากรอกข้อมูลให้ครบถ้วน', false);
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังเข้าสู่ระบบ...';
+
+            try {
+                const q = query(
+                    collection(db, "users"), 
+                    where("userId", "==", userId),
+                    where("password", "==", password)
+                );
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    showMessage('User ID หรือรหัสผ่านไม่ถูกต้อง', false);
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ';
+                    return;
+                }
+
+                // Get user data
+                let userName = '';
+                let userPosition = '';
+                let userDocId = '';
+                
+                querySnapshot.forEach((doc) => {
+                    userDocId = doc.id; // เก็บ document ID ของผู้ใช้
+                    userName = doc.data().name;
+                    userPosition = doc.data().position || '';
+                });
+
+                // Check if user position is allowed
+                const allowedPositions = ['sales', 'admin', 'engineer','manager'];
+                if (!allowedPositions.includes(userPosition.toLowerCase())) {
+                    showMessage('คุณไม่มีสิทธิ์เข้าถึงระบบนี้', false);
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ';
+                    return;
+                }
+
+                // ✅ บันทึกข้อมูลผู้ใช้ลง sessionStorage
+                sessionStorage.setItem('userId', userDocId); // เก็บ document ID
+                sessionStorage.setItem('userName', userName); // เก็บชื่อผู้ใช้
+                sessionStorage.setItem('userPosition', userPosition); // เก็บตำแหน่ง (optional)
+                
+                console.log('Login successful:', { userDocId, userName, userPosition });
+
+                // Show welcome section
+                showMessage('เข้าสู่ระบบสำเร็จ!', true);
+                
+                setTimeout(() => {
+                    loginSection.style.display = 'none';
+                    welcomeSection.classList.add('show');
+                    userNameDisplay.textContent = userName;
+                    
+                    // Redirect to home.html after 1.5 seconds
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 1500);
+                }, 1000);
+
+            } catch (error) {
+                console.error("Error signing in: ", error);
+                showMessage('เกิดข้อผิดพลาด: ' + error.message, false);
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ';
+            }
+        });
+        
+        // Back to index.html
+        const backBtn = document.getElementById('backBtn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        }
+    </script>
+</body>
+</html>

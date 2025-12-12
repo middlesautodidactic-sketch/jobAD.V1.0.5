@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ข้อมูลเบื้องต้นการติดตั้งและส่งมอบ</title>
+<style>
+body {
+  font-family: "TH SarabunPSK", sans-serif;
+  font-size: 14px;
+  margin: 40px;
+  color: #000;
+}
+h3 {
+  text-align: center;
+  margin-bottom: 0;
+}
+p.right {
+  text-align: right;
+  margin-top: 5px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 15px;
+}
+th, td {
+  border: 1px solid #000;
+  padding: 5px 6px;
+  vertical-align: top;
+}
+th {
+  text-align: center;
+  background: #f5f5f5;
+}
+input[type="text"], input[type="date"], textarea {
+  width: 100%;
+  border: none;
+  border-bottom: 1px dotted #000;
+  font-size: 14px;
+  font-family: "TH SarabunPSK", sans-serif;
+  outline: none;
+  background: transparent;
+}
+textarea {
+  resize: none;
+  height: 60px;
+}
+input[type="checkbox"] {
+  transform: scale(1.2);
+  margin-right: 4px;
+}
+button, .btnH {
+  display: block;
+  margin: 20px auto;
+  font-size: 14px;
+  padding: 6px 12px;
+  background: #c00;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover, .btnH:hover {
+  background: #900;
+}
+.status {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 10px;
+  color: green;
+}
+
+</style>
+<div>
+  <a href="notchoose.html" class="btnH">กลับไปหน้าปฏิทิน</a>
+</div>
+</head>
+<body>
+<p class="right">
+  เอกสารแนบใบสั่งงาน<br>
+  ฝ่ายวิศวกรรมและฝึกอบรม
+</p>
+
+<h3>ข้อมูลเบื้องต้นการติดตั้งและส่งมอบ</h3><br><br>
+
+<!-- ✅ ข้อมูลพื้นฐาน -->
+<div style="margin-bottom:15px;">
+  <label>เลขที่งาน (Job Number): </label>
+  <input type="text" id="jobNumberInput" readonly>
+</div>
+
+<table>
+  <tr>
+    <th>แผนดำเนินการ</th>
+    <th>วันที่</th>
+    <th>เวลา</th>
+  </tr>
+  <tr>
+    <td>ออกเดินทางจาก Office</td>
+    <td><input type="text" id="startDateInput" readonly></td>
+    <td><input type="text" id="time1"></td>
+  </tr>
+  <tr>
+    <td>เข้าติดตั้งชุดฝึก</td>
+    <td><input type="text" id="date2"></td>
+    <td><input type="text" id="time2"></td>
+  </tr>
+  <tr>
+    <td>ส่งมอบชุดฝึก</td>
+    <td><input type="text" id="date3"></td>
+    <td><input type="text" id="time3"></td>
+  </tr>
+  <tr>
+    <td>เดินทางกลับ Office</td>
+    <td><input type="text" id="endDateInput" readonly></td>
+    <td><input type="text" id="time4"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td>แผนการเดินทาง</td>
+    <td><label><input type="checkbox" id="car_company"> รถบริษัท</label></td>
+    <td><label><input type="checkbox" id="car_sales"> รถ Sales</label></td>
+    <td><label><input type="checkbox" id="bus"> รถประจำทาง</label></td>
+    <td><label><input type="checkbox" id="plane"> เครื่องบิน</label></td>
+  </tr>
+  <tr>
+    <td>Sales ไปด้วยหรือไม่:</td>
+    <td><label><input type="checkbox" id="sales_no"> ไม่ไป</label></td>
+    <td><label><input type="checkbox" id="sales_yes"> ไป</label></td>
+    <td><label><input type="checkbox" id="sales_together"> ไปด้วยกัน</label></td>
+    <td><label><input type="checkbox" id="sales_separate"> แยกกันไป</label></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>ลำดับที่</th>
+    <th>รายการชุดฝึกและอุปกรณ์ที่จะทำการส่งมอบ</th>
+    <th>จำนวน</th>
+  </tr>
+  <tr><td>1</td><td><textarea id="item1" placeholder="***รายละเอียดตามเอกสารแนบ***"></textarea></td><td><input type="text" id="qty1"></td></tr>
+  <tr><td>2</td><td><textarea id="item2"></textarea></td><td><input type="text" id="qty2"></td></tr>
+  <tr><td>3</td><td><textarea id="item3"></textarea></td><td><input type="text" id="qty3"></td></tr>
+  <tr><td>4</td><td><textarea id="item4"></textarea></td><td><input type="text" id="qty4"></td></tr>
+  <tr><td>5</td><td><textarea id="item5"></textarea></td><td><input type="text" id="qty5"></td></tr>
+</table>
+
+<table>
+  <tr><th colspan="3">รูปแบบการขนย้าย</th></tr>
+  <tr>
+    <td><label><input type="checkbox" id="move_all_top"> จ้างย้ายทั้งหมด</label></td>
+    <td><label><input type="checkbox" id="move_all_bottom"> ขนย้ายเองทั้งหมด</label></td>
+    <td><label><input type="checkbox" id="move_partial"> จ้างขนย้ายบางส่วน และ ขนไปเองบางส่วน ส่วนที่ขนไปเองมีรายการดังนี้</label></td>
+  </tr>
+</table>
+
+<table>
+  <tr><th>รายการ</th><th>จำนวน</th></tr>
+  <tr><td><textarea id="carry1"></textarea></td><td><input type="text" id="carryQty1"></td></tr>
+  <tr><td><textarea id="carry2"></textarea></td><td><input type="text" id="carryQty2"></td></tr>
+  <tr><td><textarea id="carry3"></textarea></td><td><input type="text" id="carryQty3"></td></tr>
+</table>
+
+<table>
+  <tr><th>ห้องที่ทำการติดตั้งชุดฝึกอยู่ตึกไหน (แผนที่)...</th></tr>
+  <tr><td><textarea id="roomInfo"></textarea></td></tr>
+  <tr><th>ต้องมีการติดตั้งอุปกรณ์ใดเพิ่มเติมอีกหรือไม่...</th></tr>
+  <tr><td><textarea id="extraEquip"></textarea></td></tr>
+</table>
+
+<button onclick="saveFile()">💾 บันทึกข้อมูล</button>
+<div id="statusMsg" class="status"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+    authDomain: "events-666d6.firebaseapp.com",
+    projectId: "events-666d6",
+    storageBucket: "events-666d6.firebasestorage.app",
+    messagingSenderId: "589078390914",
+    appId: "1:589078390914:web:480ce96137ffac835aac9b",
+    measurementId: "G-97GD75S814"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ✅ ดึงค่าจาก URL
+  const params = new URLSearchParams(window.location.search);
+  const job = params.get("job") || "";
+  const start = params.get("start") || "";
+  const end = params.get("end") || "";
+
+  // ✅ ใส่ค่าในช่อง input
+  document.getElementById("jobNumberInput").value = job;
+  document.getElementById("startDateInput").value = start;
+  document.getElementById("endDateInput").value = end;
+
+  // ✅ โหลดข้อมูลเดิมจาก Firestore
+  async function loadExistingData() {
+    if (!job) return;
+    const docRef = doc(db, "report_send", job);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      // ✅ ใส่ค่าข้อมูลเดิมกลับในช่อง input
+      document.getElementById("time1").value = data.time1 || "";
+      document.getElementById("date2").value = data.date2 || "";
+      document.getElementById("time2").value = data.time2 || "";
+      document.getElementById("date3").value = data.date3 || "";
+      document.getElementById("time3").value = data.time3 || "";
+      document.getElementById("time4").value = data.time4 || "";
+
+      document.getElementById("car_company").checked = data.car_company || false;
+      document.getElementById("car_sales").checked = data.car_sales || false;
+      document.getElementById("bus").checked = data.bus || false;
+      document.getElementById("plane").checked = data.plane || false;
+
+      document.getElementById("sales_no").checked = data.sales_no || false;
+      document.getElementById("sales_yes").checked = data.sales_yes || false;
+      document.getElementById("sales_together").checked = data.sales_together || false;
+      document.getElementById("sales_separate").checked = data.sales_separate || false;
+
+      // ✅ ใส่ข้อมูลในตารางรายการอุปกรณ์
+      if (data.items && Array.isArray(data.items)) {
+        data.items.forEach((item, i) => {
+          const index = i + 1;
+          document.getElementById(`item${index}`).value = item.name || "";
+          document.getElementById(`qty${index}`).value = item.qty || "";
+        });
+      }
+
+      // ✅ รูปแบบการขนย้าย
+      document.getElementById("move_all_top").checked = data.move_all_top || false;
+      document.getElementById("move_all_bottom").checked = data.move_all_bottom || false;
+      document.getElementById("move_partial").checked = data.move_partial || false;
+
+      // ✅ รายการขนย้ายเอง
+      if (data.carry && Array.isArray(data.carry)) {
+        data.carry.forEach((c, i) => {
+          const index = i + 1;
+          document.getElementById(`carry${index}`).value = c.item || "";
+          document.getElementById(`carryQty${index}`).value = c.qty || "";
+        });
+      }
+
+      document.getElementById("roomInfo").value = data.roomInfo || "";
+      document.getElementById("extraEquip").value = data.extraEquip || "";
+    }
+  }
+
+  // 🔥 เรียกโหลดข้อมูลทันทีเมื่อเปิดหน้า
+  loadExistingData();
+
+  // ✅ ฟังก์ชันบันทึกข้อมูล
+  window.saveFile = async function() {
+    const jobNumber = document.getElementById("jobNumberInput").value.trim();
+    if (!jobNumber) {
+      alert("⚠️ กรุณากรอกเลขที่งานก่อนบันทึก");
+      return;
+    }
+
+    const data = {
+      jobNumber,
+      startDate: document.getElementById("startDateInput").value,
+      endDate: document.getElementById("endDateInput").value,
+      time1: document.getElementById("time1").value,
+      date2: document.getElementById("date2").value,
+      time2: document.getElementById("time2").value,
+      date3: document.getElementById("date3").value,
+      time3: document.getElementById("time3").value,
+      time4: document.getElementById("time4").value,
+      car_company: document.getElementById("car_company").checked,
+      car_sales: document.getElementById("car_sales").checked,
+      bus: document.getElementById("bus").checked,
+      plane: document.getElementById("plane").checked,
+      sales_no: document.getElementById("sales_no").checked,
+      sales_yes: document.getElementById("sales_yes").checked,
+      sales_together: document.getElementById("sales_together").checked,
+      sales_separate: document.getElementById("sales_separate").checked,
+      items: [
+        { name: document.getElementById("item1").value, qty: document.getElementById("qty1").value },
+        { name: document.getElementById("item2").value, qty: document.getElementById("qty2").value },
+        { name: document.getElementById("item3").value, qty: document.getElementById("qty3").value },
+        { name: document.getElementById("item4").value, qty: document.getElementById("qty4").value },
+        { name: document.getElementById("item5").value, qty: document.getElementById("qty5").value }
+      ],
+      move_all_top: document.getElementById("move_all_top").checked,
+      move_all_bottom: document.getElementById("move_all_bottom").checked,
+      move_partial: document.getElementById("move_partial").checked,
+      carry: [
+        { item: document.getElementById("carry1").value, qty: document.getElementById("carryQty1").value },
+        { item: document.getElementById("carry2").value, qty: document.getElementById("carryQty2").value },
+        { item: document.getElementById("carry3").value, qty: document.getElementById("carryQty3").value }
+      ],
+      roomInfo: document.getElementById("roomInfo").value,
+      extraEquip: document.getElementById("extraEquip").value,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      await setDoc(doc(db, "report_send", jobNumber), data);
+      document.getElementById("statusMsg").textContent = "✅ บันทึกข้อมูลเรียบร้อยแล้ว!";
+      setTimeout(() => { window.location.href = "notchoose.html"; }, 1000);
+    } catch (err) {
+      document.getElementById("statusMsg").textContent = "❌ เกิดข้อผิดพลาด: " + err.message;
+      document.getElementById("statusMsg").style.color = "red";
+    }
+  };
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📅 ปฏิทินงาน</title>
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/locales-all.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  color: #2d3748;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* ====== Header ====== */
+header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 3px solid #c00;
+  gap: 1rem;
+}
+
+.logo-container img {
+  width: 60px;
+  height: auto;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.back-link {
+  position: absolute;
+  left: 2rem;
+  color: #c00;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: rgba(192, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  background: rgba(192, 0, 0, 0.2);
+  transform: translateX(-4px);
+}
+
+/* ====== Calendar ====== */
+#calendar {
+  width: 95%;
+  max-width: 1400px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+#calendar:hover {
+  transform: translateY(-4px);
+}
+
+.fc .fc-toolbar-title {
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.fc .fc-button-primary {
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.fc .fc-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(192, 0, 0, 0.4);
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: linear-gradient(135deg, #a00 0%, #c00 100%);
+}
+
+.fc .fc-daygrid-event {
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin: 2px 0;
+  border-left: 4px solid;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.fc .fc-daygrid-event:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ====== Modal ====== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 200;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  overflow: auto;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: #fff;
+  margin: 5% auto;
+  padding: 2.5rem;
+  border-radius: 24px;
+  max-width: 600px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal h3 {
+  background: linear-gradient(135deg, #c00 0%, #f44336 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modal p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.modal p strong {
+  color: #c00;
+  display: inline-block;
+  min-width: 140px;
+}
+
+.modal button {
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+  color: #fff;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.modal button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ====== Footer ====== */
+footer {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: #4a5568;
+  text-align: center;
+  padding: 1rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  border-top: 2px solid #c00;
+  font-size: 0.875rem;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  header {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .back-link {
+    position: static;
+    width: 100%;
+    text-align: center;
+  }
+
+  .header-title {
+    font-size: 1.25rem;
+  }
+
+  #calendar {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  .modal-content {
+    margin: 10% auto;
+    padding: 1.5rem;
+    width: 95%;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="ad_logo-Photoroom.png" alt="Logo">
+  </div>
+  <div class="header-title">📅 ปฏิทินงาน</div>
+  <a href="index.html" class="back-link">🚪 กลับไปหน้าหลัก</a>
+</header>
+
+<div id="calendar"></div>
+
+<div id="eventModal" class="modal">
+  <div class="modal-content">
+    <h3>รายละเอียดงาน</h3>
+    <p><strong>ชื่อผู้ปฏิบัติงาน:</strong> <span id="modalTitle"></span></p>
+    <p><strong>เลขงาน:</strong> <span id="modalJobNumber"></span></p>
+    <p><strong>ลักษณะงาน:</strong> <span id="modalJobTypes"></span></p>
+    <p><strong>สถานที่:</strong> <span id="modalLocation"></span></p>
+    <p><strong>วิธีการเดินทาง:</strong> <span id="modalHowto"></span></p>
+    <p><strong>วันที่เริ่ม:</strong> <span id="modalStart"></span>
+    <strong>วันที่สิ้นสุด:</strong> <span id="modalEnd"></span></p>
+    <p><strong>รายละเอียด:</strong> <span id="modalDetails"></span></p>
+    <p><strong>ผู้สั่งงาน:</strong> <span id="modalAssignedBy"></span></p>
+    <p><strong>สถานะ:</strong> <span id="modalStatus"></span></p>
+    <p><strong>เหตุผลที่ไม่เรียบร้อย:</strong> <span id="modalIncompleteReason"></span></p>
+    <p><strong>หมายเหตุ:</strong> <span id="modalRemark"></span></p>
+
+    <button id="closeModal">ปิด</button>
+  </div>
+</div>
+
+<footer>&copy; 2025 ระบบจองบุคคลออกปฏิบัติงาน | AUTODIDACTIC</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, addDoc
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+  authDomain: "events-666d6.firebaseapp.com",
+  projectId: "events-666d6",
+  storageBucket: "events-666d6.firebasestorage.app",
+  messagingSenderId: "589078390914",
+  appId: "1:589078390914:web:480ce96137ffac835aac9b",
+  measurementId: "G-97GD75S814"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let allEvents = [];
+
+function addOneDayForCalendar(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + 2);
+  return d.toISOString().split("T")[0];
+}
+
+function formatDateThai(dateStr) {
+  if (!dateStr || dateStr === "-") return "-";
+  try {
+    const date = new Date(dateStr + "T00:00:00");
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear() + 543;
+    return `${day}-${month}-${year}`;
+  } catch (err) {
+    return dateStr;
+  }
+}
+
+async function ensureDefaultData() {
+  try {
+    const evSnap = await getDocs(collection(db, "events"));
+    if (evSnap.empty) {
+      await addDoc(collection(db, "events"), {
+        jobNumber: "JOB-000",
+        workers: ["System"],
+        assigners: ["Admin"],
+        jobTypes: ["ตัวอย่าง"],
+        location: "สำนักงานใหญ่",
+        howto: "รถยนต์ส่วนตัว",
+        details: "ตัวอย่างงานสำหรับทดสอบระบบ",
+        start: new Date().toISOString().split("T")[0],
+        end: new Date().toISOString().split("T")[0],
+        status: "อนุมัติ",
+        remark: "",
+        acknowledged: false,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    const leaveSnap = await getDocs(collection(db, "leaves"));
+    if (leaveSnap.empty) {
+      await addDoc(collection(db, "leaves"), {
+        name: "User A",
+        reason: "ประชุมภายนอก",
+        start: new Date().toISOString().split("T")[0],
+        end: new Date().toISOString().split("T")[0]
+      });
+    }
+
+    const holSnap = await getDocs(collection(db, "holidays"));
+    if (holSnap.empty) {
+      await addDoc(collection(db, "holidays"), {
+        name: "วันขึ้นปีใหม่",
+        date: new Date().toISOString().split("T")[0]
+      });
+    }
+  } catch (err) {
+    console.error("ensureDefaultData error:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await ensureDefaultData();
+
+  const calendarEl = document.getElementById("calendar");
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: "th",
+    timeZone: "Asia/Bangkok",
+    initialView: window.innerWidth < 700 ? "listWeek" : "dayGridMonth",
+    headerToolbar: { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek,listWeek" },
+    eventContent: function(arg) {
+      const data = arg.event.extendedProps;
+      const el = document.createElement("div");
+
+      if (data.type === "leave") {
+        el.innerHTML = `<div style="background:#E3F2FD;border-left:5px solid #2196F3;padding:8px;border-radius:8px;">
+          <strong>🏖 ${arg.event.title}</strong><br><small>เหตุผล: ${data.reason||'-'}</small></div>`;
+      } else if (data.type === "holiday") {
+        el.innerHTML = `<div style="background:#FF9800;border-radius:8px;padding:8px;color:#fff;text-align:center;">🎉 ${arg.event.title}</div>`;
+      } else {
+        let acknowledgeLabel = "";
+        if (data.acknowledged === true && data.status !== "เรียบร้อย" && data.status !== "ไม่เรียบร้อย") {
+          acknowledgeLabel = `<span style="float:right;font-size:11px;color:#fff;">(รับทราบแล้ว)</span>`;
+        }
+        
+        const locationDisplay = data.location || "-";
+        const howtoDisplay = data.howto ? ` (${data.howto})` : "";
+        
+        el.innerHTML = `<div style="position:relative;width:100%;">
+            <strong>${arg.event.title}</strong>${acknowledgeLabel}
+            </div><small>📍 ${locationDisplay}${howtoDisplay}</small><br><small>🧰 ${data.jobTypes || "-"}</small><br><small>📌 ${data.status || "-"}</small>`;
+      }
+
+      return { domNodes: [el] };
+    },
+    eventClick: function(info) {
+      const data = info.event.extendedProps;
+      if (data.type === "leave") {
+        alert(`🏖 ข้อมูลวันลา\n\nชื่อ: ${info.event.title}\nวันที่: ${formatDateThai(data.realStart) || info.event.startStr} → ${formatDateThai(data.realEnd) || '-'}\nเหตุผล: ${data.reason || '-'}`);
+        return;
+      }
+      if (data.type === "holiday") {
+        alert(`🎉 วันหยุด\n\n${info.event.title}\nวันที่: ${formatDateThai(data.realDate) || info.event.startStr}`);
+        return;
+      }
+
+      document.getElementById("modalTitle").textContent = data.acknowledged ? info.event.title + " (รับทราบแล้ว)" : info.event.title;
+      document.getElementById("modalJobNumber").textContent = data.jobNumber || "-";
+      document.getElementById("modalJobTypes").textContent = data.jobTypes || "-";
+      document.getElementById("modalLocation").textContent = data.location || "-";
+      document.getElementById("modalHowto").textContent = data.howto || "-";
+      document.getElementById("modalStart").textContent = formatDateThai(data.realStart);
+      document.getElementById("modalEnd").textContent = formatDateThai(data.realEnd);
+      document.getElementById("modalDetails").textContent = data.details || "-";
+      document.getElementById("modalAssignedBy").textContent = data.assignedBy || "-";
+      document.getElementById("modalStatus").textContent = data.status || "-";
+      document.getElementById("modalIncompleteReason").textContent = data.incompleteReason || "-";
+      document.getElementById("modalRemark").textContent = data.remark || "-";
+
+      document.getElementById("eventModal").style.display = "block";
+    }
+  });
+
+  try {
+    allEvents = [];
+
+    const eventSnap = await getDocs(collection(db, "events"));
+    eventSnap.forEach(docItem => {
+      const data = docItem.data();
+      let color = "#A9A9A9";
+      if (data.status === "รออนุมัติ") color = "gray";
+      else if (data.status === "อนุมัติ") color = "#E3C565";
+      else if (data.status === "อนุมัติด่วน") color = "#b23400";
+      else if (data.status === "เรียบร้อย") color = "green";
+      else if (data.status === "ไม่เรียบร้อย") color = "darkred";
+
+      allEvents.push({
+        id: docItem.id,
+        title: Array.isArray(data.workers) ? data.workers.join(", ") : (data.workers || "-"),
+        start: data.start || "",
+        end: data.end ? addOneDayForCalendar(data.end) : undefined,
+        location: data.location || "",
+        howto: data.howto || "",
+        assignedBy: Array.isArray(data.assigners) ? data.assigners.join(", ") : (data.assigners || "-"),
+        jobNumber: data.jobNumber || "-",
+        jobTypes: Array.isArray(data.jobTypes) ? data.jobTypes.join(", ") : (data.jobTypes || "-"),
+        details: data.details || "-",
+        status: data.status || "รออนุมัติ",
+        incompleteReason: data.incompleteReason || "",
+        remark: data.remark || "",
+        acknowledged: data.acknowledged || false,
+        realStart: data.start || "",
+        realEnd: data.end || "",
+        backgroundColor: color,
+        borderColor: color,
+        textColor: "#fff",
+        type: "event",
+        allDay: true
+      });
+    });
+
+    const leaveSnap = await getDocs(collection(db, "leaves"));
+    leaveSnap.forEach(docItem => {
+      const data = docItem.data();
+      allEvents.push({
+        id: "leave-" + docItem.id,
+        title: data.name || "ไม่ระบุชื่อ",
+        start: data.start || "",
+        end: data.end ? addOneDayForCalendar(data.end) : undefined,
+        realStart: data.start || "",
+        realEnd: data.end || "",
+        backgroundColor: "#2196F3",
+        borderColor: "#2196F3",
+        textColor: "#000000",
+        type: "leave",
+        reason: data.reason || "",
+        allDay: true
+      });
+    });
+
+    const holidaySnap = await getDocs(collection(db, "holidays"));
+    holidaySnap.forEach(docItem => {
+      const data = docItem.data();
+      allEvents.push({
+        id: "holiday-" + docItem.id,
+        title: data.name || "วันหยุด",
+        start: data.date || "",
+        end: data.date ? addOneDayForCalendar(data.date) : undefined,
+        realDate: data.date || "",
+        backgroundColor: "#FF9800",
+        borderColor: "#FF9800",
+        textColor: "#fff",
+        type: "holiday",
+        allDay: true
+      });
+    });
+
+    calendar.addEventSource(allEvents);
+    calendar.render();
+  } catch (err) {
+    console.error("Error fetching events:", err);
+    alert("เกิดข้อผิดพลาดขณะดึงข้อมูล โปรดดู console");
+  }
+
+  document.getElementById("closeModal").addEventListener("click", () => {
+    document.getElementById("eventModal").style.display = "none";
+  });
+
+});
+</script>
+</body>
+</html>

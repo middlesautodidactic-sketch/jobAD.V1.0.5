@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>จัดการงาน AUTODIDACTIC</title>
+<style>
+/* ===== General Theme ===== */
+body {
+  font-family: 'Prompt', sans-serif;
+  background: linear-gradient(to bottom, #fff 0%, #fee 100%);
+  color: #c00;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Header ===== */
+header {
+  background: #c00;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.9);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.logo-container img { width: 50px; height: auto; }
+header h1 {
+  flex: 1;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+header nav a {
+  color: #fff;
+  background: rgba(0,0,0,0.2);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+header nav a:hover { background: rgba(255,255,255,0.3); }
+
+/* ===== Layout ===== */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* ===== Form Panel ===== */
+form {
+  flex: 1 1 340px;
+  max-width: 520px;
+  background: #fff;
+  border: 2px solid #c00;
+  border-radius: 15px;
+  padding: 25px;
+  box-sizing: border-box;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s;
+}
+form:hover { transform: translateY(-3px); }
+h2 { text-align: center; color: #c00; margin-bottom: 20px; }
+
+/* ===== Inputs ===== */
+.input-line {
+  width: 100%;
+  padding: 10px 8px;
+  margin: 12px 0;
+  border: 2px solid #c00;
+  border-radius: 8px;
+  outline: none;
+  font-size: 15px;
+  color: rgb(0, 0, 0);
+  background: #fff;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+.input-line:focus { border-color: #a00; box-shadow: 0 0 6px rgba(204,0,0,0.3); }
+textarea.input-line { height: 90px; resize: none; }
+
+/* ===== Buttons ===== */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 8px;
+  background: #c00;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+button:hover { background: #a00; transform: scale(1.03); }
+
+a.btn-back {
+  display: inline-block;
+  margin-top: 10px;
+  text-align: center;
+  background: #888;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+a.btn-back:hover { background: #555; }
+
+/* ===== Dropdown ===== */
+.dropdown {
+  position: relative;
+  width: 100%;
+  margin-bottom: 12px;
+}
+.dropdown-btn {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #c00;
+  border-radius: 8px;
+  background: #fff;
+  color: rgb(0, 0, 0);
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 38px;
+  align-items: center;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #c00;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 5px;
+}
+.dropdown-content label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.dropdown-content label:hover { background: #fee; }
+.selected-name {
+  background: #c00;
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
+
+/* ===== Side Panel ===== */
+#sidePanel {
+  flex: 1 1 260px;
+  min-width: 260px;
+  border: 2px solid #c00;
+  border-radius: 15px;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  overflow-y: auto;
+  max-height: 85vh;
+}
+#sidePanel h3 { text-align: center; color: #c00; }
+.event-item {
+  border: 1px solid #c00;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+.event-actions button {
+  width: auto;
+  padding: 6px 10px;
+  margin-right: 5px;
+  font-size: 13px;
+}
+.print-btn { background: #444; }
+.print-btn:hover { background: #000; }
+
+/* ===== Footer ===== */
+footer {
+  background: #c00;
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  box-shadow: 0 -4px 8px rgba(0,0,0,0.05);
+}
+
+/* ===== Responsive ===== */
+@media(max-width:900px){
+  main { flex-direction: column; align-items: center; }
+  form, #sidePanel { width: 95%; max-width: 520px; }
+  header h1 { font-size: 18px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="ad_logo-Photoroom.png" alt="Logo">
+  </div>
+  <h1>📋 จัดการงาน AUTODIDACTIC</h1>
+  <nav><a href="calendar_admin.html">กลับหน้าปฏิทิน</a></nav>
+</header>
+
+<main>
+  <!-- ========== FORM ========== -->
+  <form id="eventForm">
+    <h2 id="formTitle">เพิ่มงานใหม่</h2>
+    <input type="hidden" id="eventId">
+
+    <label>หมายเลขงาน:</label>
+    <input type="text" id="jobNumber" class="input-line" placeholder="เช่น JOB-001 (ไม่บังคับ)">
+
+    <label>คนที่สั่งงาน:</label>
+    <div class="dropdown">
+      <button type="button" class="dropdown-btn" id="assignedByBtn">เลือกชื่อ</button>
+      <div class="dropdown-content" id="assignedByList"></div>
+    </div>
+
+    <label>วันที่สั่งงาน:</label>
+    <input type="date" id="orderDate" class="input-line" required>
+
+    <label>วันที่เริ่ม:</label>
+    <input type="date" id="start" class="input-line" required>
+
+    <label>วันที่สิ้นสุด:</label>
+    <input type="date" id="end" class="input-line" required>
+
+    <label>สถานที่:</label>
+    <input type="text" id="location" class="input-line" required>
+
+    <label>ลักษณะงาน:</label>
+    <div id="jobTypeGroup" class="checkbox-group">
+      <label><input type="checkbox" value="ส่งมอบ"> ส่งมอบ</label>
+      <label><input type="checkbox" value="ฝึกอบรม"> ฝึกอบรม</label>
+      <label><input type="checkbox" value="ออกแสดงสินค้า"> ออกแสดงสินค้า</label>
+      <label><input type="checkbox" value="ตรวจเช็ค/ซ่อม"> ตรวจเช็ค/ซ่อม</label>
+      <label><input type="checkbox" value="Visit"> Visit</label>
+      <label><input type="checkbox" id="otherJobTypeCheck" value="อื่นๆ"> อื่นๆ:
+        <input type="text" id="otherJobTypeText" placeholder="ระบุ..." style="width:120px;">
+      </label>
+    </div>
+
+    <label>รายละเอียดงาน:</label>
+    <textarea id="details" class="input-line" placeholder="ใส่รายละเอียดงาน..." required></textarea>
+
+    <label>ผู้ติดต่อ:</label>
+    <input type="text" id="contactPerson" class="input-line" placeholder="ชื่อผู้ติดต่อ" required>
+
+    <label>เบอร์โทรศัพท์:</label>
+    <input type="tel" id="phoneNumber" class="input-line" placeholder="เช่น 0812345678" required>
+
+    <button type="submit">💾 บันทึก</button>
+    <a href="calendar_admin.html" class="btn-back">⬅ กลับไปปฏิทิน</a>
+  </form>
+
+  <!-- ========== EVENT LIST ========== -->
+  <div id="sidePanel">
+    <h3>🧾 รายการงาน</h3>
+    <div id="eventList"></div>
+  </div>
+</main>
+
+<footer>© 2025 AUTODIDACTIC SYSTEM. สงวนลิขสิทธิ์</footer>
+
+<!-- ========== SCRIPT SECTION ========== -->
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getFirestore, collection, doc, getDocs, addDoc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+  authDomain: "events-666d6.firebaseapp.com",
+  projectId: "events-666d6",
+  storageBucket: "events-666d6.appspot.com",
+  messagingSenderId: "589078390914",
+  appId: "1:589078390914:web:480ce96137ffac835aac9b",
+  measurementId: "G-97GD75S814"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ฟังก์ชันแปลงวันที่เป็นรูปแบบ DD/MM/YYYY (พ.ศ.)
+function formatDateThai(dateStr) {
+  if (!dateStr) return "-";
+  const [year, month, day] = dateStr.split("-");
+  const buddhistYear = parseInt(year) + 543;
+  return `${day}/${month}/${buddhistYear}`;
+}
+
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("orderDate").value = today;
+
+const eventList = document.getElementById("eventList");
+const assignedByBtn = document.getElementById("assignedByBtn");
+const assignedByList = document.getElementById("assignedByList");
+
+async function loadEvents() {
+  eventList.innerHTML = "";
+  const snap = await getDocs(collection(db, "events"));
+  snap.forEach(docSnap => {
+    const data = docSnap.data();
+    const isFinished = data.status === "เรียบร้อย" || data.status === "ไม่เรียบร้อย";
+    
+    // ไม่แสดงงานที่เรียบร้อยหรือไม่เรียบร้อย
+    if (isFinished) return;
+    
+    const div = document.createElement("div");
+    div.className = "event-item";
+    const isApproved = data.status === "อนุมัติ";
+
+    let buttonsHTML = "";
+    if (isApproved) {
+      buttonsHTML = `
+        <div class="event-actions">
+          <button class="print-btn" onclick="printEvent('${docSnap.id}')">🖨 พิมพ์</button>
+        </div>`;
+    } else if (!isFinished) {
+      buttonsHTML = `
+        <div class="event-actions">
+          <button class="edit-btn" onclick="editEvent('${docSnap.id}')">✏️ แก้ไข</button>
+          <button class="print-btn" onclick="printEvent('${docSnap.id}')">🖨 พิมพ์</button>
+          <button class="delete-btn" onclick="deleteEvent('${docSnap.id}')">🗑 ลบ</button>
+        </div>`;
+    }
+
+    div.innerHTML = `
+      <strong>${data.jobNumber || "-"}</strong><br>
+      📍 ${data.location}<br>
+      📅 วันที่สั่งงาน: ${formatDateThai(data.orderDate)}<br>
+      👤 ผู้ติดต่อ: ${data.contactPerson || "-"}<br>
+      📞 เบอร์โทร: ${data.phoneNumber || "-"}<br>
+      🧰 ${(data.jobTypes || []).join(", ")}<br>
+      📅 ${formatDateThai(data.start)} → ${formatDateThai(data.end)}<br>
+      🧑‍💼 ${(data.assigners || []).join(", ")}<br>
+      📌 สถานะ: <strong>${data.status || "รออนุมัติ"}</strong><br>
+      ${buttonsHTML}`;
+      
+    eventList.appendChild(div);
+  });
+}
+
+window.deleteEvent = async id => {
+  if (confirm("ลบงานนี้หรือไม่?")) {
+    await deleteDoc(doc(db, "events", id));
+    await loadEvents();
+  }
+}
+
+window.editEvent = async id => {
+  const docRef = doc(db, "events", id);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  if (!data) return alert("ไม่พบข้อมูล");
+  if (data.status === "อนุมัติ") return alert("ไม่สามารถแก้ไขงานที่อนุมัติแล้วได้");
+
+  await loadNames();
+
+  document.getElementById("eventId").value = id;
+  document.getElementById("jobNumber").value = data.jobNumber || "";
+  document.getElementById("location").value = data.location;
+  document.getElementById("details").value = data.details;
+  document.getElementById("orderDate").value = data.orderDate || "";
+  document.getElementById("start").value = data.start;
+  document.getElementById("end").value = data.end;
+  document.getElementById("contactPerson").value = data.contactPerson || "";
+  document.getElementById("phoneNumber").value = data.phoneNumber || "";
+
+  document.querySelectorAll("#jobTypeGroup input[type=checkbox]").forEach(cb => cb.checked = false);
+  document.getElementById("otherJobTypeText").value = "";
+
+  if (data.jobTypes) {
+    document.querySelectorAll("#jobTypeGroup input[type=checkbox]").forEach(cb => {
+      if (data.jobTypes.includes(cb.value)) cb.checked = true;
+    });
+    const other = data.jobTypes.find(t => !["ส่งมอบ","ฝึกอบรม","ออกแสดงสินค้า","ตรวจเช็ค/ซ่อม","Visit","อื่นๆ"].includes(t));
+    if (other) {
+      document.getElementById("otherJobTypeCheck").checked = true;
+      document.getElementById("otherJobTypeText").value = other;
+    }
+  }
+
+  assignedByList.querySelectorAll("input[type=checkbox]").forEach(cb => {
+    if ((data.assigners || []).includes(cb.value)) {
+      cb.checked = true;
+      cb.disabled = false;
+      cb.parentElement.style.opacity = 1;
+    }
+  });
+
+  updateDropdownButton(assignedByList, assignedByBtn);
+  document.getElementById("formTitle").innerText = "แก้ไขงาน";
+};
+
+document.getElementById("eventForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const id = document.getElementById("eventId").value;
+  const jobNumber = document.getElementById("jobNumber").value.trim();
+  const location = document.getElementById("location").value.trim();
+  const details = document.getElementById("details").value.trim();
+  const orderDate = document.getElementById("orderDate").value;
+  const start = document.getElementById("start").value;
+  const end = document.getElementById("end").value;
+  const contactPerson = document.getElementById("contactPerson").value.trim();
+  const phoneNumber = document.getElementById("phoneNumber").value.trim();
+  const assigners = Array.from(assignedByList.querySelectorAll("input[type=checkbox]:checked")).map(cb => cb.value);
+
+  let jobTypes = Array.from(document.querySelectorAll("#jobTypeGroup input[type=checkbox]:checked")).map(cb => cb.value);
+  if (document.getElementById("otherJobTypeCheck").checked) {
+    const otherText = document.getElementById("otherJobTypeText").value.trim();
+    if (otherText) jobTypes = jobTypes.filter(t => "อื่นๆ" !== t).concat(otherText);
+  }
+
+  try {
+    // ตรวจสอบหมายเลขงานซ้ำ (ถ้ามีการกรอกหมายเลขงาน)
+    if (jobNumber) {
+      const allEvents = await getDocs(collection(db, "events"));
+      const duplicate = allEvents.docs.find(docSnap => {
+        return docSnap.data().jobNumber === jobNumber && docSnap.id !== id;
+      });
+      
+      if (duplicate) {
+        alert(`⚠️ หมายเลขงาน "${jobNumber}" ซ้ำกับงานที่มีอยู่แล้ว!\nกรุณาเปลี่ยนหมายเลขงานใหม่`);
+        return;
+      }
+    }
+
+    if (id) {
+      const docRef = doc(db, "events", id);
+      await updateDoc(docRef, { jobNumber, location, details, orderDate, start, end, assigners, jobTypes, contactPerson, phoneNumber });
+      alert("แก้ไขเรียบร้อย");
+      await clearFormAfterSave();
+    } else {
+      await addDoc(collection(db, "events"), {
+        jobNumber, location, details, orderDate, start, end, assigners, jobTypes, contactPerson, phoneNumber,
+        status: "รออนุมัติ"
+      });
+      alert("บันทึกเรียบร้อย");
+      await clearFormAfterSave();
+    }
+
+    loadEvents();
+  } catch (err) {
+    console.error(err);
+    alert("เกิดข้อผิดพลาด");
+  }
+});
+
+function updateDropdownButton(listEl, btnEl){
+  const selected = Array.from(listEl.querySelectorAll("input[type=checkbox]:checked")).map(cb=>cb.value);
+  btnEl.innerHTML = selected.map(n=>`<span class="selected-name">${n}</span>`).join(" ") || "เลือกชื่อ";
+}
+
+assignedByBtn.addEventListener("click", (e)=> {
+  e.stopPropagation();
+  assignedByList.style.display = assignedByList.style.display==="block"?"none":"block";
+});
+
+assignedByList.addEventListener("change", () => {
+  updateDropdownButton(assignedByList, assignedByBtn);
+  assignedByList.style.display = "none";
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".dropdown")) {
+    assignedByList.style.display = "none";
+  }
+});
+
+async function loadNames() {
+  assignedByList.innerHTML = "";
+
+  const assignersSnap = await getDocs(collection(db, "assigners"));
+  assignersSnap.forEach(docSnap => {
+    const name = docSnap.data().name;
+    assignedByList.innerHTML += `
+      <label>
+        <input type="checkbox" value="${name}"> ${name}
+      </label>`;
+  });
+
+  updateDropdownButton(assignedByList, assignedByBtn);
+}
+
+loadEvents();
+loadNames();
+
+// ดึงชื่อจาก URL parameter และเลือกอัตโนมัติ
+function loadNameFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const nameFromURL = urlParams.get('name');
+  
+  if (nameFromURL) {
+    // รอให้โหลดรายชื่อเสร็จก่อน
+    setTimeout(() => {
+      assignedByList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        if (cb.value === nameFromURL) {
+          cb.checked = true;
+        }
+      });
+      updateDropdownButton(assignedByList, assignedByBtn);
+    }, 500);
+  }
+}
+
+// เรียกใช้ฟังก์ชันเมื่อโหลดหน้า
+loadNameFromURL();
+
+document.querySelectorAll('#jobTypeGroup input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const selected = Array.from(document.querySelectorAll('#jobTypeGroup input[type="checkbox"]:checked'))
+      .map(cb => cb.value);
+
+    const otherText = document.getElementById("otherJobTypeText").value.trim();
+    if (document.getElementById("otherJobTypeCheck").checked && otherText) {
+      selected.push(otherText);
+    }
+
+    localStorage.setItem('savedJobTypes', JSON.stringify(selected));
+  });
+});
+
+document.getElementById("otherJobTypeText").addEventListener("input", () => {
+  const otherCheck = document.getElementById("otherJobTypeCheck");
+  if (otherCheck.checked) {
+    const selected = Array.from(document.querySelectorAll('#jobTypeGroup input[type="checkbox"]:checked'))
+      .map(cb => cb.value);
+
+    const otherText = document.getElementById("otherJobTypeText").value.trim();
+    if (otherText) selected.push(otherText);
+
+    localStorage.setItem('savedJobTypes', JSON.stringify(selected));
+  }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = JSON.parse(localStorage.getItem('savedJobTypes') || '[]');
+  if (saved.length > 0) {
+    document.querySelectorAll('#jobTypeGroup input[type="checkbox"]').forEach(cb => {
+      if (saved.includes(cb.value)) cb.checked = true;
+    });
+    const knownTypes = ["ส่งมอบ", "ฝึกอบรม", "ออกแสดงสินค้า", "ตรวจเช็ค/ซ่อม", "Visit", "อื่นๆ"];
+    const other = saved.find(v => !knownTypes.includes(v));
+    if (other) {
+      document.getElementById("otherJobTypeCheck").checked = true;
+      document.getElementById("otherJobTypeText").value = other;
+    }
+  }
+});
+
+function saveFormToLocalStorage() {
+  const formData = {
+    jobNumber: document.getElementById("jobNumber").value.trim(),
+    location: document.getElementById("location").value.trim(),
+    details: document.getElementById("details").value.trim(),
+    orderDate: document.getElementById("orderDate").value,
+    start: document.getElementById("start").value,
+    end: document.getElementById("end").value,
+    contactPerson: document.getElementById("contactPerson").value.trim(),
+    phoneNumber: document.getElementById("phoneNumber").value.trim(),
+    assigners: Array.from(assignedByList.querySelectorAll("input[type=checkbox]:checked")).map(cb => cb.value),
+    jobTypes: Array.from(document.querySelectorAll('#jobTypeGroup input[type="checkbox"]:checked')).map(cb => cb.value),
+    otherJobTypeText: document.getElementById("otherJobTypeText").value.trim()
+  };
+  localStorage.setItem("eventFormData", JSON.stringify(formData));
+}
+
+function loadFormFromLocalStorage() {
+  const saved = JSON.parse(localStorage.getItem("eventFormData") || "{}");
+  if (!saved) return;
+
+  document.getElementById("jobNumber").value = saved.jobNumber || "";
+  document.getElementById("location").value = saved.location || "";
+  document.getElementById("details").value = saved.details || "";
+  document.getElementById("orderDate").value = saved.orderDate || "";
+  document.getElementById("start").value = saved.start || "";
+  document.getElementById("end").value = saved.end || "";
+  document.getElementById("contactPerson").value = saved.contactPerson || "";
+  document.getElementById("phoneNumber").value = saved.phoneNumber || "";
+
+  document.querySelectorAll('#jobTypeGroup input[type="checkbox"]').forEach(cb => {
+    cb.checked = saved.jobTypes?.includes(cb.value) || false;
+  });
+  if (saved.otherJobTypeText) {
+    document.getElementById("otherJobTypeCheck").checked = true;
+    document.getElementById("otherJobTypeText").value = saved.otherJobTypeText;
+  }
+
+  assignedByList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.checked = saved.assigners?.includes(cb.value) || false;
+  });
+  updateDropdownButton(assignedByList, assignedByBtn);
+}
+
+document.querySelectorAll('#eventForm input, #eventForm textarea').forEach(el => {
+  el.addEventListener('input', saveFormToLocalStorage);
+});
+document.querySelectorAll('#eventForm input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', saveFormToLocalStorage);
+});
+
+window.addEventListener('DOMContentLoaded', loadFormFromLocalStorage);
+
+async function clearFormAfterSave() {
+  localStorage.removeItem("eventFormData");
+  localStorage.removeItem("savedJobTypes");
+  localStorage.removeItem("selectedAssigners");
+
+  const form = document.getElementById("eventForm");
+  form.reset();
+
+  document.getElementById("eventId").value = "";
+  document.getElementById("otherJobTypeText").value = "";
+
+  document.querySelectorAll("#jobTypeGroup input[type=checkbox]").forEach(cb => cb.checked = false);
+  document.querySelectorAll(".dropdown-content input[type=checkbox]").forEach(cb => cb.checked = false);
+
+  document.getElementById("assignedByBtn").innerText = "เลือกชื่อ";
+  
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("orderDate").value = today;
+}
+
+function saveNamesSelection() {
+  const selectedAssigners = Array.from(assignedByList.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+  localStorage.setItem("selectedAssigners", JSON.stringify(selectedAssigners));
+}
+
+function loadNamesSelection() {
+  const savedAssigners = JSON.parse(localStorage.getItem("selectedAssigners") || "[]");
+
+  assignedByList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.checked = savedAssigners.includes(cb.value);
+  });
+
+  updateDropdownButton(assignedByList, assignedByBtn);
+}
+
+assignedByList.addEventListener('change', () => {
+  saveNamesSelection();
+  updateDropdownButton(assignedByList, assignedByBtn);
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(loadNamesSelection, 1000);
+});
+
+function goToReportPage(page) {
+  const jobNumber = document.getElementById("jobNumber").value.trim() || "ไม่ระบุ";
+  const start = document.getElementById("start").value;
+  const end = document.getElementById("end").value;
+
+  if (!start || !end) {
+    alert("กรุณากรอกวันที่เริ่มและวันที่สิ้นสุดก่อน");
+    return;
+  }
+
+  const url = `${page}?job=${encodeURIComponent(jobNumber)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+  window.location.href = url;
+}
+
+document.querySelector('input[value="ส่งมอบ"]').addEventListener('change', (e) => {
+  if (e.target.checked) goToReportPage("report_send.html");
+});
+document.querySelector('input[value="ฝึกอบรม"]').addEventListener('change', (e) => {
+  if (e.target.checked) goToReportPage("seereport4.html");
+});
+document.querySelector('input[value="ออกแสดงสินค้า"]').addEventListener('change', (e) => {
+  if (e.target.checked) goToReportPage("seereport2.html");
+});
+document.querySelector('input[value="ตรวจเช็ค/ซ่อม"]').addEventListener('change', (e) => {
+  if (e.target.checked) goToReportPage("seereport3.html");
+});
+
+
+window.printEvent = async (id) => {
+  const docRef = doc(db, "events", id);
+  const docSnap = await getDoc(docRef);
+
+  if (!docSnap.exists()) {
+    alert("ไม่พบข้อมูลงาน");
+    return;
+  }
+
+  const jobNumber = docSnap.data().jobNumber || "ไม่ระบุ";
+
+  const url = new URL("reportS.html", window.location.href);
+  url.searchParams.set("job", jobNumber);
+
+  window.open(url, "_blank");
+};
+
+
+</script>
+</body>
+</html>
