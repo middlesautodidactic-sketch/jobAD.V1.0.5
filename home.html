@@ -239,11 +239,23 @@ header {
   border-left: 4px solid;
   transition: all 0.2s ease;
   cursor: pointer;
+  overflow: visible;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .fc .fc-daygrid-event:hover {
   transform: scale(1.03);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.fc .fc-daygrid-day-frame {
+  min-height: 120px !important;
+}
+
+.fc .fc-daygrid-day-events {
+  min-height: 100px;
 }
 
 /* ====== Modal ====== */
