@@ -305,11 +305,23 @@ header {
   border-left: 4px solid;
   transition: all 0.2s ease;
   cursor: pointer;
+  overflow: visible;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .fc .fc-daygrid-event:hover {
   transform: scale(1.03);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.fc .fc-daygrid-day-frame {
+  min-height: 120px !important;
+}
+
+.fc .fc-daygrid-day-events {
+  min-height: 100px;
 }
 
 /* ====== Footer ====== */
@@ -506,33 +518,53 @@ document.addEventListener("DOMContentLoaded", async function() {
     eventContent: function(arg) {
       const data = arg.event.extendedProps;
       const el = document.createElement("div");
-      
+
       if (data.type === "leave") {
-        el.innerHTML = `<div style="background:#E3F2FD; border-left:5px solid #2196F3; padding:8px; border-radius:8px;">
-          <strong>🏖 ${arg.event.title}</strong><br>
-          <small>เหตุผล: ${data.reason}</small></div>`;
+        el.innerHTML = `<div style="background:#E3F2FD;border-left:5px solid #2196F3;padding:8px;border-radius:8px;">
+          <strong>🏖 ${arg.event.title}</strong><br><small>เหตุผล: ${data.reason||'-'}</small></div>`;
       } else if (data.type === "holiday") {
-        el.innerHTML = `<div style="background:#FF9800; border-radius:8px; padding:8px; color:#fff; text-align:center;">
-          🎉 ${arg.event.title}</div>`;
+        el.innerHTML = `<div style="background:#FF9800;border-radius:8px;padding:8px;color:#fff;text-align:center;">🎉 ${arg.event.title}</div>`;
       } else {
         let acknowledgeLabel = "";
-        if (data.acknowledged === true && data.status !== "เรียบร้อย" && data.status !== "ไม่เรียบร้อย") {
-          acknowledgeLabel = `<span style="float:right; font-size:11px; color:#fff;">(รับทราบแล้ว)</span>`;
+        if (data.status !== "เรียบร้อย" && data.status !== "ไม่เรียบร้อย") {
+          // นับจำนวนคนทั้งหมดในงาน
+          let workersList = [];
+          if (arg.event.title && typeof arg.event.title === 'string') {
+            workersList = arg.event.title.split(",").map(name => name.trim()).filter(name => name.length > 0);
+          }
+          const totalWorkers = workersList.length;
+          
+          // นับจำนวนคนที่รับทราบแล้ว
+          let acknowledgedList = [];
+          if (data.acknowledgedBy) {
+            if (Array.isArray(data.acknowledgedBy)) {
+              acknowledgedList = data.acknowledgedBy.map(name => name.trim().normalize('NFC'));
+            } else if (typeof data.acknowledgedBy === 'string' && data.acknowledgedBy.trim() !== '') {
+              acknowledgedList = data.acknowledgedBy.split(",").map(name => name.trim().normalize('NFC'));
+            }
+          }
+          
+          // สร้างวงกลมและเครื่องหมายถูก
+          let circles = "";
+          for (let i = 0; i < totalWorkers; i++) {
+            if (i < acknowledgedList.length) {
+              circles += `<span style="display:inline-block;width:16px;height:16px;background:#4CAF50;border-radius:50%;margin:0 2px;text-align:center;line-height:16px;color:#fff;font-size:10px;">✓</span>`;
+            } else {
+              circles += `<span style="display:inline-block;width:16px;height:16px;background:rgba(255,255,255,0.3);border:2px solid #fff;border-radius:50%;margin:0 2px;"></span>`;
+            }
+          }
+          
+          acknowledgeLabel = circles;
         }
-
+        
         const locationDisplay = data.location || "-";
         const howtoDisplay = data.howto ? ` (${data.howto})` : "";
-
-        el.innerHTML = `
-          <div style="position: relative; width:100%;">
+        
+        el.innerHTML = `<div style="position:relative;width:100%;">
             <strong>${arg.event.title}</strong>
-            ${acknowledgeLabel}
-          </div>
-          <small>📍 ${locationDisplay}${howtoDisplay}</small><br>
-          <small>🧰 ${data.jobTypes || "-"}</small><br>
-          <small>📌 ${data.status || "-"}</small>
-        `; 
+            </div><small>📍 ${locationDisplay}${howtoDisplay}</small><br><small>🧰 ${data.jobTypes || "-"}</small><br><small>📌 ${data.status || "-"} ${acknowledgeLabel}</small>`;
       }
+
       return { domNodes: [el] };
     },
     eventClick: function(info) {
@@ -585,9 +617,10 @@ document.addEventListener("DOMContentLoaded", async function() {
         status: data.status || "รออนุมัติ",
         incompleteReason: data.incompleteReason || "",
         remark: data.remark || "",
+        realStart: data.start || "-",
+        realEnd: data.end || "-",
         acknowledged: data.acknowledged || false,
-        realStart: data.start || "",
-        realEnd: data.end || "",
+        acknowledgedBy: data.acknowledgedBy || "",
         backgroundColor: color,
         borderColor: color,
         textColor: "#fff",
